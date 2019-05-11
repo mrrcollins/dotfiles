@@ -1,4 +1,28 @@
 #!/bin/bash
 
+dotfiles=(tmux.conf)
+cwd=$(pwd)
+
+for i in "${dotfiles[@]}"; 
+do 
+
+    DFILE="${HOME}/.${i}"
+    echo "Working on $i (destination ${DFILE})..."
+
+    if [ ! -L "${DFILE}" ]; then
+        echo "Symlink ${DFILE} doesn't exist"
+        if [ -f "${DFILE}" ]; then 
+            BACKUP=${DFILE}.$(date +"%Y%m%d%H%M%S")
+            echo "${DFILE} file exists, backing it up to ${BACKUP}"
+            mv ${DFILE} ${BACKUP}
+        fi
+        
+        echo "Creating symlink for ${i}"
+        ln -s "${cwd}/${i}" "${DFILE}"
+    else
+        echo "Symlink for ${DFILE} exists."
+    fi
+
+done
 # Symlink tmux config
-ln -s ~/.config/dotfiles/tmux.conf ~/.tmux.conf
+#ln -s ~/.config/dotfiles/tmux.conf ~/.tmux.conf
