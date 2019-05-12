@@ -11,6 +11,3 @@ alias gt='vim ~/Dropbox/Elements/goztoday.taskpaper'
 
 alias gn="cd ~/Dropbox/Elements"
 
-# Get local aliases
-source ~/.bash_aliases.local
-

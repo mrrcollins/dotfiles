@@ -26,6 +26,11 @@ HISTSIZE=1000
 HISTFILESIZE=2000
 
 # save history for multiple terminals
+
+if [ ! -d "${HOME}/.bash_history_log" ]; then
+    mkdir "${HOME}/.bash_history_log"
+fi
+
 HISTSUFFIX=`tty | sed 's/\///g;s/^dev//g'`
 HISTFILE="$HOME/.bash_history_log/bash_history_$HISTSUFFIX"
 HISTTIMEFORMAT="%y-%m-%d %H:%M:%S "
@@ -127,6 +132,12 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
+
+# Import local aliases
+if [ -f ~/.bash_aliases.local ]; then
+    . ~/.bash_aliases.local
+fi
+
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
