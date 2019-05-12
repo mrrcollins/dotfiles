@@ -262,7 +262,7 @@ post() {
 
 
 # Bashmarks
-unalias l
-source ~/.local/bin/bashmarks.sh
+#unalias l
+#source ~/.local/bin/bashmarks.sh
 
 
