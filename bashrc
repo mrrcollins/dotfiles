@@ -8,7 +8,6 @@ case $- in
       *) return;;
 esac
 
-PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD/$HOME/~}\007"'
 
 # set PATH so it includes user's private bin if it exists
 if [ -d "$HOME/bin" ] ; then
@@ -25,6 +24,26 @@ shopt -s histappend
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
 HISTSIZE=1000
 HISTFILESIZE=2000
+
+# save history for multiple terminals
+HISTSUFFIX=`tty | sed 's/\///g;s/^dev//g'`
+HISTFILE="$HOME/.bash_history_log/bash_history_$HISTSUFFIX"
+HISTTIMEFORMAT="%y-%m-%d %H:%M:%S "
+HISTCONTROL=ignoredups:ignorespace
+HISTSIZE=1000
+HISTFILESIZE=5000
+shopt -s histappend
+PROMPT_COMMAND='history -a'
+
+PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD/$HOME/~}\007";history -a'
+
+# Search history
+function searchhistory() {
+    grep -ri "${1}" ~/.bash_history_log/*
+}
+alias shistory=searchhistory
+
+
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
@@ -204,6 +223,43 @@ PS1='\u@\h:\w$(git_prompt)\[\033[00m\]\$ '
 
 
 PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\] $(git_prompt)\$ ' 
+
+# wp-cli functions
+getdrafts() {
+    MONTH=$1
+    if [[ -z ${MONTH} ]]; then MONTH=$(date +"%m"); fi
+
+    YEAR=$2
+    if [[ -z ${YEAR} ]]; then YEAR=$(date +"%Y"); fi
+
+    wp @e post list --year=${YEAR} --monthnum=${MONTH} --post_status=draft --order=asc
+}
+
+getpending() {
+    MONTH=$1
+    if [[ -z ${MONTH} ]]; then MONTH=$(date +"%m"); fi
+    wp @e post list --year=$(date +"%Y") --monthnum=${MONTH} --post_status=pending --order=asc
+}
+
+editpost() {
+    wp @e post edit $1
+}
+
+setpending() {
+    POST=$1
+    if [[ ! -z ${POST} ]]; then
+        wp @e post update ${POST} --post_status=pending
+    else
+        echo "No post id"
+    fi
+}
+
+post() {
+    MSG=$1
+    wp @r post create --format=status --post_content="${MSG}" --post_title="${MSG}" --post_category=355
+}
+
+
 
 # Bashmarks
 unalias l

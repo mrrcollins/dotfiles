@@ -10,3 +10,7 @@ alias today='cat ~/Dropbox/Elements/goztoday.taskpaper | grep @today |grep -v @d
 alias gt='vim ~/Dropbox/Elements/goztoday.taskpaper'
 
 alias gn="cd ~/Dropbox/Elements"
+
+# Get local aliases
+source ~/.bash_aliases.local
+
