@@ -1,6 +1,6 @@
 #!/bin/bash
 
-dotfiles=(tmux.conf)
+dotfiles=(tmux.conf bash_aliases bash_profile bashrc)
 cwd=$(pwd)
 
 for i in "${dotfiles[@]}"; 
@@ -20,7 +20,7 @@ do
         echo "Creating symlink for ${i}"
         ln -s "${cwd}/${i}" "${DFILE}"
     else
-        echo "Symlink for ${DFILE} exists."
+        echo "Skipping ${DFILE}, symlink already exists."
     fi
 
 done
