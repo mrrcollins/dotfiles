@@ -276,4 +276,9 @@ post() {
 #unalias l
 #source ~/.local/bin/bashmarks.sh
 
+# Import local bash settings
+if [ -f ~/.bashrc.local ]; then
+    . ~/.bashrc.local
+fi
+
 
