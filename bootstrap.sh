@@ -3,7 +3,7 @@
 sudo -v > /dev/null
 SUDOACCESS=$?
 
-if [ ${SUDOACCESS} ]; then
+if [ ${SUDOACCESS} -eq 0 ]; then
 echo "Install the default apps..."
     sudo apt -qq update
     sudo apt -qq install vim git tmux mosh
