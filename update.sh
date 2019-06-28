@@ -15,6 +15,10 @@ fi
 echo "Checking/updating dotfiles..."    
 git pull --quiet
 
+#update .vim
+echo "Checking/update .vim..."
+git -C ~/.vim pull --quiet
+
 #update vim plugins
 for i in ~/.vim/bundle/*; do 
     echo "Checking/updating ${i}..."    
