@@ -1,8 +1,12 @@
 #!/bin/bash
 
+if [ ! $(sudo -v) ]; then
 echo "Install the default apps..."
-sudo apt -qq update
-sudo apt -qq install vim git tmux mosh
+    sudo apt -qq update
+    sudo apt -qq install vim git tmux mosh
+else
+    echo "No sudo access, skipping install."
+fi
 
 echo "Set up dotfiles..."
 . setupdotfiles.sh
