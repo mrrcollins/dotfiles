@@ -8,9 +8,7 @@ echo "Set up dotfiles..."
 . setupdotfiles.sh
 
 echo "Set up Vim..."
-cd ~/
-git clone https://github.com/mrrcollins/vim.git .vim
-cd .vim
-. setupvim.sh
-ln -s ~/.vim/.vimrc ~/.vimrc
+git clone https://github.com/mrrcollins/vim.git ~/.vim
+cd ~/.vim
+. bootstrap.sh
 
