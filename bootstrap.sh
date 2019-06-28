@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ ! $(sudo -v) ]; then
+if [ $(sudo -v > /dev/null) ]; then
 echo "Install the default apps..."
     sudo apt -qq update
     sudo apt -qq install vim git tmux mosh
