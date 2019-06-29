@@ -16,7 +16,7 @@ echo "Set up dotfiles..."
 
 echo "Set up Vim..."
 if [ ! -d ~/.vim ]; then
-    git clone --quiet https://github.com/mrrcollins/vim.git ~/.vim
+    git clone --quiet git@github.com:mrrcollins/vim.git ~/.vim
     cd ~/.vim
     . bootstrap.sh
 else
