@@ -5,11 +5,13 @@ alias gs="git status -s"
 
 alias rst="sed -i 's/ *@done\(.*\)//g'"
 alias gj="gozjournal"
+alias j='vim + +startinsert ~/notes/Journal/`date +"%Y"`.markdown'
 
-alias today='cat ~/Dropbox/Elements/notes/Lists/goztoday.taskpaper | grep @today |grep -v @done'
-alias gt='vim ~/Dropbox/Elements/notes/Lists/goztoday.taskpaper'
+alias today='cat ~/notes/Lists/goztoday.taskpaper | grep @today |grep -v @done'
+alias tl='vim ~/notes/Lists/goztoday.taskpaper'
+alias dl='vim ~/notes/Lists/gozdaily.taskpaper'
 
-alias gn="cd ~/Dropbox/Elements"
+alias gn="cd ~/notes"
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
