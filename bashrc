@@ -253,7 +253,10 @@ post() {
     wp @r post create --format=status --post_content="${MSG}" --post_title="${MSG}" --post_category=355
 }
 
-
+je() {
+    ENTRY=$1
+    echo "`date +\"%D\"` - ${1}" >> ~/notes/`date +"%Y"`.markdown
+}
 
 # Bashmarks
 #unalias l

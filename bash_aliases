@@ -4,14 +4,16 @@ alias gp="git push"
 alias gs="git status -s"
 
 alias rst="sed -i 's/ *@done\(.*\)//g'"
-alias gj="gozjournal"
-alias j='vim + +startinsert ~/notes/Journal/`date +"%Y"`.markdown'
 
+alias nsync='cd ~/notes;. notesync.sh;cd -'
 alias today='cat ~/notes/Lists/goztoday.taskpaper | grep @today |grep -v @done'
 alias tl='vim ~/notes/Lists/goztoday.taskpaper'
 alias dl='vim ~/notes/Lists/gozdaily.taskpaper'
 alias dtl='vim -O ~/notes/Lists/gozdaily.taskpaper ~/notes/Lists/goztoday.taskpaper'
 alias gn="cd ~/notes"
+
+alias gj="gozjournal"
+alias j='vim + +startinsert ~/notes/Journal/`date +"%Y"`.markdown'
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
