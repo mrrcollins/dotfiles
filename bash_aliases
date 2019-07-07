@@ -10,7 +10,7 @@ alias today='cat ~/notes/Lists/goztoday.taskpaper | grep @today |grep -v @done'
 alias tl='vim ~/notes/Lists/goztoday.taskpaper'
 alias dl='vim ~/notes/Lists/gozdaily.taskpaper'
 alias dtl='vim -O ~/notes/Lists/gozdaily.taskpaper ~/notes/Lists/goztoday.taskpaper'
-alias tips="vim ~/notes/Notes/tips.markdown"
+alias tips="vim -c "Toc" ~/notes/Notes/tips.markdown"
 alias gn="cd ~/notes"
 
 alias gj="gozjournal"
