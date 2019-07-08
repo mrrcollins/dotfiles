@@ -13,6 +13,8 @@ alias dtl='vim -O ~/notes/Lists/gozdaily.taskpaper ~/notes/Lists/goztoday.taskpa
 alias tips="vim -c "Toc" ~/notes/Notes/tips.markdown"
 alias gn="cd ~/notes"
 
+alias menu='~/notes/gozprod.sh'
+
 alias gj="gozjournal"
 alias j='vim + +startinsert ~/notes/Journal/`date +"%Y"`.markdown'
 
