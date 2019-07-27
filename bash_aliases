@@ -16,7 +16,7 @@ alias gn="cd ~/notes"
 alias menu='~/notes/gozprod.sh'
 
 alias gj="gozjournal"
-alias j='vim + +startinsert ~/notes/Journal/`date +"%Y"`.markdown'
+alias j='echo -e "\n" >> ~/notes/Journal/`date +"%Y"`.markdown;vim + +startinsert ~/notes/Journal/`date +"%Y"`.markdown'
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then

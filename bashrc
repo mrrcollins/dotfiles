@@ -255,7 +255,7 @@ post() {
 
 je() {
     ENTRY=$1
-    echo "`date +\"%D\"` - ${1}" >> ~/notes/`date +"%Y"`.markdown
+    echo -e "\n`date  +\"%Y/%m/%d %R\"` - ${1}" >> ~/notes/Journal/`date +"%Y"`.markdown
 }
 
 # Bashmarks
