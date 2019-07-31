@@ -11,6 +11,7 @@ alias tl='vim ~/notes/Lists/goztoday.taskpaper'
 alias dl='vim ~/notes/Lists/gozdaily.taskpaper'
 alias dtl='vim -O ~/notes/Lists/gozdaily.taskpaper ~/notes/Lists/goztoday.taskpaper'
 alias tips="vim -c "Toc" ~/notes/Notes/tips.markdown"
+alias ideas="vim -c "Toc" ~/notes/Notes/ideas.markdown"
 alias gn="cd ~/notes"
 
 alias menu='~/notes/gozprod.sh'

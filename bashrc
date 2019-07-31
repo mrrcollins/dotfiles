@@ -258,6 +258,24 @@ je() {
     echo -e "\n`date  +\"%Y/%m/%d %R\"` - ${1}" >> ~/notes/Journal/`date +"%Y"`.markdown
 }
 
+addtask() {
+TODOLIST=~/notes/Lists/goztoday.taskpaper
+
+PROJECT=${1}
+TASK=${2}
+
+if [ $# -eq 2 ]; then
+    echo "Adding to project ${PROJECT}..."
+    sed -i "s/${PROJECT}:/${PROJECT}:\n\t- ${TASK}/" "${TODOLIST}"
+elif [ $# -eq 1 ]; then
+    echo "Adding to the top..."
+    sed -i "1s/^/\t- ${1}\n/" "${TODOLIST}"
+else
+    echo "To add a task, enter the task as a parameter."
+    echo "You can also supply a project name as the first parameter."
+fi
+}
+
 # Bashmarks
 #unalias l
 #source ~/.local/bin/bashmarks.sh
