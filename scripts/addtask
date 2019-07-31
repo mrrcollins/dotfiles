@@ -1,0 +1,26 @@
+#!/bin/bash
+
+if [ -f ~/.brantley ]; then
+    . ~/.brantley
+else
+    echo "Configuration file ~/.brantley not found"
+    exit
+fi
+
+if [ -z ${todolist+x} ]; then 
+    echo "Set location of todolist to your today list"
+    exit
+fi
+project=${1}
+task=${2}
+
+if [ $# -eq 2 ]; then
+    echo "Adding to project ${project}..."
+    sed -i "s/${project}:/${project}:\n\t- ${task}/" "${todolist}"
+elif [ $# -eq 1 ]; then
+    echo "Adding to the Inbox..."
+    sed -i "1s/^/\t- ${project}\n/" "${todolist}"
+else
+    echo "To add a task, enter the task as a parameter."
+    echo "You can also supply a project name as the first parameter."
+fi
