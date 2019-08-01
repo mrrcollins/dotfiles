@@ -15,6 +15,11 @@ project=${1}
 task=${2}
 
 if [ $# -eq 2 ]; then
+    grep ${project} ${todolist} > /dev/null
+    if [ $? -eq 1 ]; then
+        echo "Adding project ${project}..."
+        sed -i "1s/^/\n${project}:\n/" "${todolist}"
+    fi
     echo "Adding to project ${project}..."
     sed -i "s/${project}:/${project}:\n\t- ${task}/" "${todolist}"
 elif [ $# -eq 1 ]; then
