@@ -21,7 +21,7 @@ function addtask() {
     echo "$# ${project} - ${task}"
 
     if [ ${#task} -gt 0 ]; then
-        grep "${project}" "${todolist}" > /dev/null
+        grep "^${project}:" "${todolist}" > /dev/null
         if [ $? -eq 1 ]; then
             echo "Adding project ${project}..."
             sed -i "1s/^/\n${project}:\n/" "${todolist}"
@@ -38,7 +38,26 @@ function addtask() {
 }
 
 function ls() {
-    cat ${todolist}
+
+    case "${1}" in
+        today)
+            grep "@today\|:" ${todolist} | grep -v "@done"
+            ;;
+
+        *)
+            grep "^${1}:" "${todolist}" > /dev/null
+            if [ $? -eq 1 ]; then
+                cat ${todolist} 
+            else
+                lsproject "${1}"
+            fi
+            ;;
+    esac    
+}
+
+function lsproject() {
+
+    echo "Items in ${1}:"
 }
 
 action=${1}
