@@ -1,0 +1,58 @@
+#!/bin/bash
+
+if [ -f ~/.brantley ]; then
+    . ~/.brantley
+else
+    echo "Configuration file ~/.brantley not found"
+    exit
+fi
+
+if [ -z ${todolist+x} ]; then 
+    echo "Set location of todolist to your today list"
+    exit
+fi
+
+function addtask() {
+    project="${1}"
+    task="${2}"
+
+    echo "$# ${project} - ${task}"
+
+    if [ ${#task} -gt 0 ]; then
+        grep "${project}" "${todolist}" > /dev/null
+        if [ $? -eq 1 ]; then
+            echo "Adding project ${project}..."
+            sed -i "1s/^/\n${project}:\n/" "${todolist}"
+        fi
+        echo "Adding to project ${project}..."
+        sed -i "s/${project}:/${project}:\n\t- ${task}/" "${todolist}"
+    elif [ ${#project} -gt 0 ]; then
+        echo "Adding to the Inbox..."
+        sed -i "1s/^/\t- ${project}\n/" "${todolist}"
+    else
+        echo "To add a task, enter the task as a parameter."
+        echo "You can also supply a project name as the first parameter."
+    fi
+}
+
+function ls() {
+    cat ${todolist}
+}
+
+action=${1}
+
+case "${action}" in
+    add)
+        addtask "${2}" "${3}"
+        ;;
+
+    ls)
+        ls "${2}"
+        ;;
+
+    *)
+        echo "Help goes here..."
+        exit 1
+esac
+
+
