@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Brantley is the secret to your success
+
 if [ -f ~/.brantley ]; then
     . ~/.brantley
 else
