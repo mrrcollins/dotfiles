@@ -41,7 +41,7 @@ function ls() {
 
     case "${1}" in
         today)
-            grep "@today\|:" ${todolist} | grep -v "@done"
+            grep "@today\|^[A-Za-z].*:" "${todolist}" | grep -v "@done"
             ;;
 
         *)
@@ -60,6 +60,10 @@ function lsproject() {
     echo "Items in ${1}:"
 }
 
+function search() {
+    grep -v "^[A-Za-z].*:" "${todolist}" | grep -E -i "${1}"
+} 
+
 action=${1}
 
 case "${action}" in
@@ -69,6 +73,10 @@ case "${action}" in
 
     ls)
         ls "${2}"
+        ;;
+
+    search)
+        search "${2}"
         ;;
 
     *)
