@@ -40,7 +40,15 @@ function ls() {
     local linenum=0
     case "${1}" in
         today)
-            grep "@today\|^[A-Za-z].*:" "${todolist}" | grep -v "@done"
+            #grep "@today\|^[A-Za-z].*:" "${todolist}" | grep -v "@done"
+            while read i || [[ -n $i ]]; do
+                ((linenum++))
+                if [[ ${i} =~ [^.*]:$ ]]; then
+                    echo "${i}"
+                elif [[ ${i} =~ "@today" && ! ${i} =~ "@done" ]]; then
+                    if [ ${#i} -gt 0 ]; then printf "%02d" $linenum;echo " ${i}"; fi
+                fi
+            done < ${todolist}
             ;;
 
         *)
@@ -50,7 +58,7 @@ function ls() {
                 while read i || [[ -n $i ]]; do
                     
                     ((linenum++))
-                    if [[ ${i} == ".*:" ]]; then
+                    if [[ ${i} =~ [^.*]:$ ]]; then
                         echo "${i}"
                     else
                         if [ ${#i} -gt 0 ]; then printf "%02d" $linenum;echo " ${i}"; fi
@@ -73,13 +81,13 @@ function lsproject() {
         #echo "${i}"
         ((linenum++))
         if [ "${found}" = true ]; then
-            if [[ ${i} =~ ":" ]]; then
+            if [[ ${i} =~ [^.*]:$ ]]; then
                 found=false
             else
                 if [ ${#i} -gt 0 ]; then printf "%02d" $linenum;echo " ${i}"; fi
             fi
         fi
-        if [[ ${i} == ${project}*: ]]; then found=true; fi
+        if [[ ${i} == ${project}: ]]; then found=true; fi
     done < "${todolist}"
 }
 
@@ -111,7 +119,11 @@ function markdue() {
     local line=${1}
     local due=${2}
     if [[  $(sed "${line}q;d" "${todolist}") == *@due* ]]; then
-        sed -i "${line}s/@due(.*)/@due(${due})/" "${todolist}"
+        if [ ${#due} -eq 0 ]; then
+            sed -i "${line}s/ @due(.*)//" "${todolist}"
+        else
+            sed -i "${line}s/@due(.*)/@due(${due})/" "${todolist}"
+        fi
     else
         sed -i "${line}s/$/ @due(${due})/" "${todolist}"
     fi
@@ -155,6 +167,12 @@ List tasks:
     brantley ls
     brantley ls today
     brantley ls PROJECT
+
+Mark tasks done:
+    brantley done TASKNUM
+
+Mark tasks due:
+    brantley due TASKNUM YYYY-mm-dd
 
 Search tasks:
     brantley search REGULAREXPRESSION
