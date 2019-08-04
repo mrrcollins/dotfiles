@@ -1,3 +1,6 @@
+# System aliases
+alias duf='du -sk * | sort -n | perl -ne '\''($s,$f)=split(m{\t});for (qw(K M G)) {if($s<1024) {printf("%.1f",$s);print "$_\t$f"; last};$s=$s/1024}'\'
+
 #git aliases
 alias gc="git add . && git commit -am"
 alias gp="git push"
