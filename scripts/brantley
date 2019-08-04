@@ -18,8 +18,6 @@ function addtask() {
     project="${1}"
     task="${2}"
 
-    echo "$# ${project} - ${task}"
-
     if [ ${#task} -gt 0 ]; then
         grep "^${project}:" "${todolist}" > /dev/null
         if [ $? -eq 1 ]; then
@@ -57,7 +55,21 @@ function ls() {
 
 function lsproject() {
 
-    echo "Items in ${1}:"
+    local project=${1}
+    local found=false
+
+    echo "Items in ${project}:"
+    while read i || [[ -n $i ]]; do
+        #echo "${i}"
+        if [ "${found}" = true ]; then
+            if [[ ${i} =~ ":" ]]; then
+                found=false
+            else
+                if [ ${#i} -gt 0 ]; then echo "${i}"; fi
+            fi
+        fi
+        if [[ ${i} == ${project}*: ]]; then found=true; fi
+    done < "${todolist}"
 }
 
 function search() {
@@ -80,7 +92,23 @@ case "${action}" in
         ;;
 
     *)
-        echo "Help goes here..."
+cat << EOF
+Brantley, the secret to your success.
+
+Add tasks:
+    brantley add "This is a task to add"
+    brantley add PROJECT "Add task to project PROJECT"
+
+List tasks:
+    brantley ls
+    brantley ls today
+    brantley ls PROJECT
+
+Search tasks:
+    brantley search REGULAREXPRESSION
+
+It might be helpful to alias b=brantley
+EOF
         exit 1
 esac
 
