@@ -37,6 +37,7 @@ function addtask() {
 
 function ls() {
 
+    local linenum=0
     case "${1}" in
         today)
             grep "@today\|^[A-Za-z].*:" "${todolist}" | grep -v "@done"
@@ -45,7 +46,16 @@ function ls() {
         *)
             grep "^${1}:" "${todolist}" > /dev/null
             if [ $? -eq 1 ]; then
-                cat ${todolist} 
+                #cat ${todolist}
+                while read i || [[ -n $i ]]; do
+                    
+                    ((linenum++))
+                    if [[ ${i} == ".*:" ]]; then
+                        echo "${i}"
+                    else
+                        if [ ${#i} -gt 0 ]; then printf "%02d" $linenum;echo " ${i}"; fi
+                    fi
+                done < ${todolist}
             else
                 lsproject "${1}"
             fi
@@ -57,15 +67,16 @@ function lsproject() {
 
     local project=${1}
     local found=false
-
+    local linenum=0
     echo "Items in ${project}:"
     while read i || [[ -n $i ]]; do
         #echo "${i}"
+        ((linenum++))
         if [ "${found}" = true ]; then
             if [[ ${i} =~ ":" ]]; then
                 found=false
             else
-                if [ ${#i} -gt 0 ]; then echo "${i}"; fi
+                if [ ${#i} -gt 0 ]; then printf "%02d" $linenum;echo " ${i}"; fi
             fi
         fi
         if [[ ${i} == ${project}*: ]]; then found=true; fi
@@ -75,6 +86,36 @@ function lsproject() {
 function search() {
     grep -v "^[A-Za-z].*:" "${todolist}" | grep -E -i "${1}"
 } 
+
+function append() {
+    local line=${1}
+    local text=${2}
+    if [ ${#text} -gt 0 ]; then
+        sed -i "${line}s/$/ ${text}/" "${todolist}"
+    else
+        echo "Nothing to append!"
+    fi
+}
+
+function markdone() {
+    local line=${1}
+    dd=$(date +"%Y-%m-%d")
+    if [[  $(sed "${line}q;d" "${todolist}") == *@done* ]]; then
+        sed -i "${line}s/ @done(.*)//" "${todolist}"
+    else
+        sed -i "${line}s/$/ @done(${dd})/" "${todolist}"
+    fi
+}
+
+function markdue() {
+    local line=${1}
+    local due=${2}
+    if [[  $(sed "${line}q;d" "${todolist}") == *@due* ]]; then
+        sed -i "${line}s/@due(.*)/@due(${due})/" "${todolist}"
+    else
+        sed -i "${line}s/$/ @due(${due})/" "${todolist}"
+    fi
+}
 
 action=${1}
 
@@ -89,6 +130,17 @@ case "${action}" in
 
     search)
         search "${2}"
+        ;;
+
+    append)
+        append "${2}" "${3}"
+        ;;
+
+    due)
+        markdue "${2}" "${3}"
+        ;;
+    done)
+        markdone "${2}"
         ;;
 
     *)
