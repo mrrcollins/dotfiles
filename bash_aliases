@@ -6,7 +6,6 @@ alias gs="git status -s"
 alias rst="sed -i 's/ *@done\(.*\)//g'"
 
 alias nsync='cd ~/notes;. notesync.sh;cd -'
-alias today='cat ~/notes/Lists/goztoday.taskpaper | grep @today |grep -v @done'
 alias tl='vim ~/notes/Lists/goztoday.taskpaper'
 alias dl='vim ~/notes/Lists/gozdaily.taskpaper'
 alias dtl='vim -O ~/notes/Lists/gozdaily.taskpaper ~/notes/Lists/goztoday.taskpaper'
@@ -18,6 +17,13 @@ alias menu='~/notes/gozprod.sh'
 
 alias gj="gozjournal"
 alias j='echo -e "\n" >> ~/notes/Journal/`date +"%Y"`.markdown;vim + +startinsert ~/notes/Journal/`date +"%Y"`.markdown'
+
+#brantley aliases
+alias b='brantley'
+alias ba='brantley add'
+alias bl='brantley ls'
+alias blt='brantley ls today'
+alias today='brantley ls today'
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
