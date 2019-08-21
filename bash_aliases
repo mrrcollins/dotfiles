@@ -44,5 +44,5 @@ fi
 # some more ls aliases
 alias ll='ls -alFN'
 alias la='ls -AN'
-alias l='ls -CFN'
+#alias l='ls -CFN'
 

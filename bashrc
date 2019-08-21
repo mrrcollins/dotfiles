@@ -259,8 +259,8 @@ je() {
 }
 
 # Bashmarks
-#unalias l
-#source ~/.local/bin/bashmarks.sh
+unalias l
+source bashmarks.sh
 
 # set PATH so it includes the scripts folder  if it exists
 if [ -d "$HOME/.config/dotfiles/scripts" ] ; then
