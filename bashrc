@@ -258,14 +258,14 @@ je() {
     echo -e "\n`date  +\"%Y/%m/%d %R\"` - ${1}" >> ~/notes/Journal/`date +"%Y"`.markdown
 }
 
-# Bashmarks
-unalias l
-source bashmarks.sh
-
 # set PATH so it includes the scripts folder  if it exists
 if [ -d "$HOME/.config/dotfiles/scripts" ] ; then
         PATH="$HOME/.config/dotfiles/scripts:$PATH"
 fi
+
+# Bashmarks
+#unalias l
+source bashmarks.sh
 
 
 # Import local bash settings
