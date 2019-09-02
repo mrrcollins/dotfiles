@@ -1,0 +1,23 @@
+#!/bin/bash
+
+site=${1}
+postfile=${2}
+posttitle=$(cat ${postfile} | grep ^Title | cut -d ":" -f 2 | xargs)
+
+echo "Creating post '${posttitle}' from ${postfile}..."
+
+wp ${site} term list category --fields=id,name,slug
+echo -n "Category? "
+read -e category
+
+echo -n "Tags? "
+read -e tags
+
+echo -n "Create post (y/n)? "
+read -e yesno
+
+if [ ${yesno} == "y" ]; then
+    cat ${postfile} | wp ${site} post create - --post_category=${category} --post_title="${posttitle}" --tags_input="${tags}"
+    git mv ${postfile} ../Archive/`date +"%Y"`/
+fi
+
