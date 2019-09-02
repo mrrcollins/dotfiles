@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if [ -z ${@} ]; then
+    echo "Usage: createpost @SITE FILENAME"
+    exit
+fi
+
+
 site=${1}
 postfile=${2}
 posttitle=$(cat ${postfile} | grep ^Title | cut -d ":" -f 2 | xargs)
