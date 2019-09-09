@@ -21,7 +21,7 @@ alias menu='~/notes/gozprod.sh'
 
 alias gj="gozjournal"
 alias j='echo -e "\n" >> ~/notes/Journal/`date +"%Y"`.markdown;vim + +startinsert ~/notes/Journal/`date +"%Y"`.markdown'
-alias tj='vim -O + ~/notes/Journal/`date +"%Y"`.markdown ~/notes/goztoday.taskpaper'
+alias tj='vim -O + ~/notes/Journal/`date +"%Y"`.markdown ~/notes/Lists/goztoday.taskpaper'
 
 #brantley aliases
 alias b='brantley'
