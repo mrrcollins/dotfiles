@@ -47,3 +47,4 @@ alias ll='ls -alFN'
 alias la='ls -AN'
 #alias l='ls -CFN'
 
+alias yt2mp3="youtube-dl -x --audio-format mp3"
