@@ -13,7 +13,8 @@ fi
 
 # Update dotfiles repo
 echo "Checking/updating dotfiles..."    
-git pull --quiet
+dotfiles=$(dirname "$0")
+git -C ${dotfiles}/.. pull --quiet
 
 #update .vim
 echo "Checking/update .vim..."
