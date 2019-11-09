@@ -6,7 +6,7 @@ alias ls='ls -FX'
 alias gc="git add . && git commit -am"
 alias gp="git push"
 alias gs="git status -s"
-
+alias gl="git log --stat"
 alias rst="sed -i 's/ *@done\(.*\)//g'"
 
 alias nsync='cd ~/notes;. notesync.sh;cd -'
