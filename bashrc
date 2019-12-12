@@ -267,6 +267,8 @@ fi
 #unalias l
 source bashmarks.sh
 
+# Fix ls
+export QUOTING_STYLE=literal
 
 # Import local bash settings
 # include `PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"` if on a Mac with coreutils provided by brew
