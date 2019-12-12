@@ -1,0 +1,11 @@
+#Saved in dotfiles/schedule/sync-repos.service
+[Unit]
+Description=Automatically does git push and pull on a number of repos
+
+[Service]
+Type=simple
+ExecStart=/home/gozar/.config/dotfiles/scripts/sync-repos.sh
+Nice=19
+
+[Install]
+WantedBy=sync-repos.target

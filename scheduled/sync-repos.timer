@@ -1,0 +1,10 @@
+#Saved in ~/.config/dotfiles/schedule/sync-repos.timer
+[Unit]
+Description=Automatically does git push and pull on a number of repos
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=10min
+
+[Install]
+WantedBy=timers.target
