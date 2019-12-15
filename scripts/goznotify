@@ -68,6 +68,7 @@ POSTDATE="{\"type\": \"note\", \"title\": \"${TITLE}\", \"body\": \"${MESSAGE}\"
  /usr/bin/curl -s -X POST \
     https://api.telegram.org/bot${APIKEY}/sendMessage \
     -d text="${MESSAGE}" \
+    -d parse_mode="Markdown" \
     -d chat_id=${TO} > /dev/null
 
 # curl -s \
