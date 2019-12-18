@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# From [A shell function to wrap tmux and make the basic commands a bit easier](https://gist.github.com/ttscoff/a37427a8c331f072904d)
+
 __lower() {
 	echo "$@"|tr "[:upper:]" "[:lower:]"
 }
