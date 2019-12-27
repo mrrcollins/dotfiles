@@ -1,6 +1,15 @@
 #!/bin/bash
 
+# :::::::. :::::::..    :::.   :::.    :::.:::::::::::::::    .,::::::.-:.     ::-.
+#  ;;;'';;';;;;``;;;;   ;;`;;  `;;;;,  `;;;;;;;;;;;'''';;;    ;;;;'''' ';;.   ;;;;'
+#  [[[__[[\.[[[,/[[['  ,[[ '[[,  [[[[[. '[[     [[     [[[     [[cccc    '[[,[[['
+#  $$""""Y$$$$$$$$c   c$$$cc$$$c $$$ "Y$c$$     $$     $$'     $$""""      c$$"
+# _88o,,od8P888b "88bo,888   888,888    Y88     88,   o88oo,.__888oo,__  ,8P"`
+# ""YUMMMP" MMMM   "W" YMM   ""` MMM     YM     MMM   """"YUMMM""""YUMMMmM"
+
 # Brantley is the secret to your success
+# Started August 2019
+# Versoin 0.1
 
 if [ -f ~/.brantley ]; then
     . ~/.brantley
@@ -9,8 +18,8 @@ else
     exit
 fi
 
-if [ -z ${todolist+x} ]; then 
-    echo "Set location of todolist to your today list"
+if [ -z ${todaylist+x} ]; then 
+    echo "Set location of todaylist to your today list in the config file."
     exit
 fi
 
@@ -18,21 +27,56 @@ fi
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
+function help() {
+cat << EOF
+Brantley, the secret to your success. Version 0.1
+
+Usage:
+
+brantley [-ahf] <add|ls|done|due|today|search> <project|linenum> item
+
+Add tasks:
+    brantley add "This is a task to add"
+    brantley add PROJECT "Add task to project PROJECT"
+
+List tasks:
+    brantley ls
+    brantley ls today
+    brantley ls PROJECT
+
+Mark tasks done:
+    brantley done TASKNUM
+    branctly do TASKNUM
+
+Mark tasks due:
+    brantley due TASKNUM YYYY-mm-dd
+
+Toggle tasks today:
+    brantley today TASKNUM
+
+Search tasks:
+    brantley search REGULAREXPRESSION
+
+It might be helpful to alias b=brantley
+EOF
+
+}
+
 function addtask() {
     project="${1}"
     task="${2}"
 
     if [ ${#task} -gt 0 ]; then
-        grep "^${project}:" "${todolist}" > /dev/null
+        grep "^${project}:" "${todaylist}" > /dev/null
         if [ $? -eq 1 ]; then
             echo "Adding project ${project}..."
-            sed -i "1s/^/\n${project}:\n/" "${todolist}"
+            sed -i "1s/^/\n${project}:\n/" "${todaylist}"
         fi
         echo "Adding to project ${project}..."
-        sed -i "s/${project}:/${project}:\n\t- ${task}/" "${todolist}"
+        sed -i "s/${project}:/${project}:\n\t- ${task}/" "${todaylist}"
     elif [ ${#project} -gt 0 ]; then
         echo "Adding to the Inbox..."
-        sed -i "1s/^/\t- ${project}\n/" "${todolist}"
+        sed -i "1s/^/\t- ${project}\n/" "${todaylist}"
     else
         echo "To add a task, enter the task as a parameter."
         echo "You can also supply a project name as the first parameter."
@@ -42,32 +86,46 @@ function addtask() {
 function ls() {
 
     local linenum=0
+    local pp="previousproject"
+    local cp=""
+
     case "${1}" in
         today)
-            #grep "@today\|^[A-Za-z].*:" "${todolist}" | grep -v "@done"
+            #grep "@today\|^[A-Za-z].*:" "${todaylist}" | grep -v "@done"
             while read i || [[ -n $i ]]; do
                 ((linenum++))
-                if [[ ${i} =~ [^.*]:$ ]]; then
-                    echo -e "${RED}${i}${NC}"
-                elif [[ ${i} =~ "@today" && ! ${i} =~ "@done" ]]; then
-                    if [ ${#i} -gt 0 ]; then printf "%02d" $linenum;echo " ${i}"; fi
+                if [[ "${i}" =~ [^.*]:$ ]]; then
+                    #echo -e "${RED}${i}${NC}"
+                    cp="${i}"
+                elif [[ "${i}" =~ "@today" && ! "${i}" =~ "@done" && ! "${i}" =~ "@cancelled" ]]; then
+                    if [ ${#i} -gt 0 ]; then
+                       if [ "${cp}" != "${pp}" ]; then echo -e "${RED}${cp}${NC}"; fi 
+                        printf "%02d" $linenum;
+                        echo " ${i}"; fi
+                        pp="${cp}"
                 fi
-            done < ${todolist}
+            done < ${todaylist}
             ;;
 
         *)
-            grep "^${1}:" "${todolist}" > /dev/null
+            grep "^${1}:" "${todaylist}" > /dev/null
             if [ $? -eq 1 ]; then
-                #cat ${todolist}
+                #cat ${todaylist}
                 while read i || [[ -n $i ]]; do
                     
                     ((linenum++))
-                    if [[ ${i} =~ [^.*]:$ ]]; then
-                        echo "${i}"
-                    else
-                        if [ ${#i} -gt 0 ]; then printf "%02d" $linenum;echo " ${i}"; fi
+                    if [[ ( ! "${i}" =~ "@done" && ! "${i}" =~ "@cancelled" ) || ${all} = TRUE ]]; then
+                        if [[ "${i}" =~ [^.*]:$ ]]; then
+                            #echo "${i}"
+                            cp="${i}"
+                        else
+                            if [ ${#i} -gt 0 ]; then 
+                                if [ "${cp}" != "${pp}" ]; then echo -e "${RED}${cp}${NC}"; fi 
+                                printf "%02d" $linenum;echo " ${i}"; fi
+                                pp="${cp}"
+                        fi
                     fi
-                done < ${todolist}
+                done < ${todaylist}
             else
                 lsproject "${1}"
             fi
@@ -88,22 +146,34 @@ function lsproject() {
             if [[ ${i} =~ [^.*]:$ ]]; then
                 found=false
             else
-                if [ ${#i} -gt 0 ]; then printf "%02d" $linenum;echo " ${i}"; fi
+                if [[ ! ${i} =~ "@done" || ${all} = TRUE ]]; then
+                    if [ ${#i} -gt 0 ]; then printf "%02d" $linenum;echo " ${i}"; fi
+                fi
             fi
         fi
         if [[ ${i} == ${project}: ]]; then found=true; fi
-    done < "${todolist}"
+    done < "${todaylist}"
 }
 
 function search() {
-    grep -v "^[A-Za-z].*:" "${todolist}" | grep -E -i "${1}"
+
+    local linenum=0
+    local search=${1}
+    while read i || [[ -n $i ]]; do
+        ((linenum++))
+        if [[ ${i} =~ [^.*]:$ ]]; then
+            echo "${i}"
+        else
+            if [[ ${i} =~ ${search} ]]; then printf "%02d" $linenum;echo " ${i}"; fi
+        fi
+    done < ${todaylist}
 } 
 
 function append() {
     local line=${1}
     local text=${2}
     if [ ${#text} -gt 0 ]; then
-        sed -i "${line}s/$/ ${text}/" "${todolist}"
+        sed -i "${line}s/$/ ${text}/" "${todaylist}"
     else
         echo "Nothing to append!"
     fi
@@ -111,36 +181,61 @@ function append() {
 
 function marktoday() {
     local line=${1}
-    if [[  $(sed "${line}q;d" "${todolist}") == *@today* ]]; then
-        sed -i "${line}s/ @today//" "${todolist}"
-    else
-        sed -i "${line}s/$/ @today/" "${todolist}"
+    if [ ${#line} -gt 0 ]; then
+        if [[  $(sed "${line}q;d" "${todaylist}") == *@today* ]]; then
+            sed -i "${line}s/ @today//" "${todaylist}"
+        else
+            sed -i "${line}s/$/ @today/" "${todaylist}"
+        fi
+    else 
+        echo "No line number given."
     fi
 }
 
 function markdone() {
     local line=${1}
     dd=$(date +"%Y-%m-%d")
-    if [[  $(sed "${line}q;d" "${todolist}") == *@done* ]]; then
-        sed -i "${line}s/ @done(.*)//" "${todolist}"
+    if [[  $(sed "${line}q;d" "${todaylist}") == *@done* ]]; then
+        sed -i "${line}s/ @done(.*)//" "${todaylist}"
     else
-        sed -i "${line}s/$/ @done(${dd})/" "${todolist}"
+        sed -i "${line}s/$/ @done(${dd})/" "${todaylist}"
     fi
 }
 
 function markdue() {
     local line=${1}
     local due=${2}
-    if [[  $(sed "${line}q;d" "${todolist}") == *@due* ]]; then
+    if [[  $(sed "${line}q;d" "${todaylist}") == *@due* ]]; then
         if [ ${#due} -eq 0 ]; then
-            sed -i "${line}s/ @due(.*)//" "${todolist}"
+            sed -i "${line}s/ @due(.*)//" "${todaylist}"
         else
-            sed -i "${line}s/@due(.*)/@due(${due})/" "${todolist}"
+            sed -i "${line}s/@due(.*)/@due(${due})/" "${todaylist}"
         fi
     else
-        sed -i "${line}s/$/ @due(${due})/" "${todolist}"
+        sed -i "${line}s/$/ @due(${due})/" "${todaylist}"
     fi
 }
+
+while getopts 'ahf:' OPTION; do
+    case "${OPTION}" in
+        a)
+            all=TRUE
+            ;;
+        h)
+            help
+            exit 1
+            ;;
+
+        f)
+            list="$OPTARG"
+            ;;
+    esac
+done
+
+shift "$(($OPTIND -1))"
+
+if [ ${#list} -gt 0 ]; then todaylist=${list}; fi
+echo "Working with ${todaylist}..."
 
 action=${1}
 
@@ -164,7 +259,7 @@ case "${action}" in
     due)
         markdue "${2}" "${3}"
         ;;
-    done)
+    done|do)
         markdone "${2}"
         ;;
 
@@ -173,33 +268,9 @@ case "${action}" in
         ;;
 
     *)
-cat << EOF
-Brantley, the secret to your success.
-
-Add tasks:
-    brantley add "This is a task to add"
-    brantley add PROJECT "Add task to project PROJECT"
-
-List tasks:
-    brantley ls
-    brantley ls today
-    brantley ls PROJECT
-
-Mark tasks done:
-    brantley done TASKNUM
-
-Mark tasks due:
-    brantley due TASKNUM YYYY-mm-dd
-
-Toggle tasks today:
-    brantley today TASKNUM
-
-Search tasks:
-    brantley search REGULAREXPRESSION
-
-It might be helpful to alias b=brantley
-EOF
+        help
         exit 1
+        ;;
 esac
 
 
