@@ -23,6 +23,9 @@ alias gj="gozjournal"
 alias j='echo -e "\n" >> ~/notes/Journal/`date +"%Y"`.markdown;vim + +startinsert ~/notes/Journal/`date +"%Y"`.markdown'
 alias tj='vim -O + ~/notes/Journal/`date +"%Y"`.markdown ~/notes/Lists/goztoday.taskpaper'
 
+# tmux aliases
+
+alias tma="tmux new -ADs"
 #brantley aliases
 alias b='brantley'
 alias ba='brantley add'
