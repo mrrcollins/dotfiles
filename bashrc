@@ -258,6 +258,14 @@ je() {
     echo -e "\n`date  +\"%Y/%m/%d %R\"` - ${1}" >> ~/notes/Journal/`date +"%Y"`.markdown
 }
 
+uz() {
+    file="${1%.zip}"
+
+    mkdir ${file}
+    cd ${file}
+    unzip ../${1}
+    
+}
 # set PATH so it includes the scripts folder  if it exists
 if [ -d "$HOME/.config/dotfiles/scripts" ] ; then
         PATH="$HOME/.config/dotfiles/scripts:$PATH"
