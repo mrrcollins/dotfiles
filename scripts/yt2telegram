@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Download a song from Youtube and send it to me over Telegram
+# Requires youtube-dl and 
+# [telegram-notify](https://github.com/NicolasBernaerts/debian-scripts/tree/master/telegram)
+
+
+yturl="${1}"
+
+songname=$(youtube-dl -o "%(title)s.%(ext)s" --get-filename "${yturl}")
+youtube-dl -x -o "%(title)s.%(ext)s" --audio-format mp3 "${yturl}"
+
+telegram-notify --document "${songname%.*}.mp3"
