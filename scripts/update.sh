@@ -12,10 +12,15 @@ echo "Updating system software..."
 #fi
 
 ostype=$(uname -a)
+uname -a | grep -q Android
+android=$?
 
 if [[ "$ostype" =~ "Alpine" ]]; then
     sudo apk update
     sudo apk upgrade
+elif [ $android ]; then
+    apt update
+    apt upgrade
 else
     sudo apt update
     sudo apt upgrade
