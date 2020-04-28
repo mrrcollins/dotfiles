@@ -18,6 +18,9 @@ android=$?
 if [[ "$ostype" =~ "Alpine" ]]; then
     sudo apk update
     sudo apk upgrade
+elif [[ "$ostype" =~ "Darwin" ]]; then
+    brew update
+    brew upgrade
 elif [ $android ]; then
     apt update
     apt upgrade
