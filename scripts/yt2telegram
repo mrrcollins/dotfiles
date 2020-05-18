@@ -10,4 +10,4 @@ yturl="${1}"
 songname=$(/usr/local/bin/youtube-dl -o "%(title)s.%(ext)s" --get-filename "${yturl}")
 /usr/local/bin/youtube-dl -x -o "%(title)s.%(ext)s" --audio-format mp3 "${yturl}"
 
-/home/gozar/.config/dotfiles/scripts/telegram-notify --user "-437710695" --document "${songname%.*}.mp3"
+${HOME}/.config/dotfiles/scripts/telegram-notify --user "-1001471206245" --document "${songname%.*}.mp3"
