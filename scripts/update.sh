@@ -21,7 +21,7 @@ if [[ "$ostype" =~ "Alpine" ]]; then
 elif [[ "$ostype" =~ "Darwin" ]]; then
     brew update
     brew upgrade
-elif [ $android ]; then
+elif [ ! $android ]; then
     apt update
     apt upgrade
 else
