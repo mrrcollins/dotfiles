@@ -16,6 +16,9 @@ ostype=$(uname -a)
 if [[ "$ostype" =~ "Alpine" ]]; then
     sudo apk update
     sudo apk upgrade
+elif [[ "$ostype" =~ "Android" ]]; then
+    apt update
+    apt upgrade
 else
     sudo apt update
     sudo apt upgrade
