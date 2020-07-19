@@ -281,7 +281,7 @@ export QUOTING_STYLE=literal
 # Import local bash settings
 # include `PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"` if on a Mac with coreutils provided by brew
 if [ -f ~/.bashrc.local ]; then
-    . ~/.bashrc.local
+    source ~/.bashrc.local
 fi
 
 
