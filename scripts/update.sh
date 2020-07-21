@@ -1,14 +1,35 @@
 #!/bin/bash
 
 echo "Updating system software..."
-sudo -v > /dev/null
-SUDOACCESS=$?
+#sudo -v > /dev/null
+#SUDOACCESS=$?
 
-if [ ${SUDOACCESS} -eq 0 ]; then
-    [ -z "$(find -H /var/lib/apt/lists -maxdepth 0 -mtime -1)" ] && sudo apt -qq update
-    sudo apt -qq upgrade
+#if [ ${SUDOACCESS} -eq 0 ]; then
+#    [ -z "$(find -H /var/lib/apt/lists -maxdepth 0 -mtime -1)" ] && sudo apt -qq update
+#    sudo apt -qq upgrade
+#else
+#    echo "No sudo access, skipping update."
+#fi
+
+ostype=$(uname -a)
+uname -a | grep -q Android
+android=$?
+
+if [[ "$ostype" =~ "Alpine" ]]; then
+    sudo apk update
+    sudo apk upgrade
+elif [[ "$ostype" =~ "Android" ]]; then
+    apt update
+    apt upgrade
+elif [[ "$ostype" =~ "Darwin" ]]; then
+    brew update
+    brew upgrade
+elif [ ! $android ]; then
+    apt update
+    apt upgrade
 else
-    echo "No sudo access, skipping update."
+    sudo apt update
+    sudo apt upgrade
 fi
 
 # Update dotfiles repo
