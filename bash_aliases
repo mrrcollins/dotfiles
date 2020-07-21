@@ -51,3 +51,5 @@ alias la='ls -AN'
 #alias l='ls -CFN'
 
 alias yt2mp3="youtube-dl -x --audio-format mp3"
+
+gam() { "/home/collinsr/bin/gam/gam" "$@" ; }
