@@ -27,7 +27,7 @@ DATE=`date +"%Y-%m-%d %H:%M"`
 EDITOR="vim + +startinsert"
 DEFAULTFOLDER="."
 EXT="markdown"
-PREPEND="`date +%Y-%m-%d` - "
+PREPEND="`date +%Y-%m-%d`-"
 SLUG=$(echo -n "${TITLE}" | sed -e 's/[^[:alnum:]]/-/g' | tr -s '-' | tr A-Z a-z)
 
 if [[ ! -f ${DEFAULTFOLDER}/${PREPEND}${SLUG}.${EXT} ]]; then
