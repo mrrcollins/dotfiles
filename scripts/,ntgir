@@ -1,0 +1,38 @@
+#!/bin/bash
+
+## New Drafts
+## Modified from GozNote
+## Quickly create notes from the commandline or something like Alfred
+## v.03 - 2019/08/25 - Create files with only the last two digits of
+## the year for the start of the filename instead of the whole year.
+## v.02 - 2019/08/05
+## v.01 - 2018/12/04
+##
+## Previous GozNote versions
+## v.03 - 2013/10/28
+# The file name is now created from the slug of the title
+#
+## v.02 - 2013/04/29
+## v.01 - 2013/01/09
+
+if [ $# -eq 0 ]; then
+    echo "NewNote v.02"
+    echo "Enter the name of the note as the argument"
+    exit
+fi
+
+TITLE="$@"
+AUTHOR="`whoami`"
+DATE=`date +"%Y-%m-%d %H:%M"`
+EDITOR="vim + +startinsert"
+DEFAULTFOLDER="."
+EXT="markdown"
+PREPEND="`date +%y%m%d`-"
+SLUG=$(echo -n "${TITLE}" | sed -e 's/[^[:alnum:]]/-/g' | tr -s '-' | tr A-Z a-z)
+
+if [[ ! -f ${DEFAULTFOLDER}/${PREPEND}${SLUG}.${EXT} ]]; then
+    echo -e "---\nTitle: ${TITLE}\nAuthor: ${AUTHOR}\nDate: ${DATE}\nSlug: ${SLUG}\nCategory: \nTags:\nStatus: draft\n---\n\n" > "${DEFAULTFOLDER}/${PREPEND}${SLUG}.${EXT}"
+fi
+
+${EDITOR} "${DEFAULTFOLDER}/${PREPEND}${SLUG}.${EXT}"
+

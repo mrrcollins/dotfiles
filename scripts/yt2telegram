@@ -4,6 +4,8 @@
 # Requires youtube-dl and 
 # [telegram-notify](https://github.com/NicolasBernaerts/debian-scripts/tree/master/telegram)
 
+# Update youtube-dl
+sudo youtube-dl -U
 
 yturl="${1}"
 
