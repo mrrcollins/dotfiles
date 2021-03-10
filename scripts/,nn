@@ -3,6 +3,9 @@
 ## New Drafts
 ## Modified from GozNote
 ## Quickly create notes from the commandline or something like Alfred
+## v.04 - 2021-03-09 - I'm removing the prepending of the date. I'll add
+##          it manually with an Espanso expansion if I want it. The file
+##          extension is changed to `md`.
 ## v.03 - 2019/08/25 - Create files with only the last two digits of
 ## the year for the start of the filename instead of the whole year.
 ## v.02 - 2019/08/05
@@ -27,7 +30,8 @@ DATE=`date +"%Y-%m-%d %H:%M"`
 EDITOR="vim + +startinsert"
 DEFAULTFOLDER="."
 EXT="md"
-PREPEND="`date +%Y-%m-%d`-"
+#PREPEND="`date +%Y-%m-%d`-"
+PREPEND=""
 SLUG=$(echo -n "${TITLE}" | sed -e 's/[^[:alnum:]]/-/g' | tr -s '-' | tr A-Z a-z)
 
 if [[ ! -f ${DEFAULTFOLDER}/${PREPEND}${SLUG}.${EXT} ]]; then
