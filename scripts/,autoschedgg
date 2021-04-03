@@ -1,0 +1,42 @@
+#!/bin/bash
+
+postsdir="${HOME}/Web/gozgeek.com/content/posts/$(date +"%Y")"
+archive="${HOME}/notes/Archive/$(date +"%Y")"
+
+RANDOM=$(date +%s%N | cut -b10-19)
+h=$(( $RANDOM % 8 + 8 ))
+m=$(( $RANDOM % 59 + 0 ))
+
+d=$(find ${postsdir} | xargs -I {} basename "{}" | sort -r | head -1)
+day=$(date -d "${d:0:10} + 1 day" +"%Y-%m-%d")
+filename="${1}"
+#day="2021-03-24"
+#f="/home/goz/notes/BlogPosts/2021-03-23-first-try.md"
+#filename="2021-03-23-first-try.md"
+
+if [[ ${filename:0:1} == "2" ]]; then
+    outfilename="${day}-${filename:11}"
+else
+    outfilename="${day}-${filename}"
+fi
+
+schedule="${day}T$(printf "%02d" ${h}):$(printf "%02d" ${m}):00-04:00"
+
+#echo "$postsdir $outfilename $schedule" 
+# Put the file in the right place
+cp "${filename}" "${postsdir}/${outfilename}"
+
+# Add new schedule date and time
+sed -i "s/^Date: .*$/date: ${schedule}/" "${postsdir}/${outfilename}"
+
+# Remove Status
+sed -i "/^Status: .*$/d" "${postsdir}/${outfilename}"
+
+# Archive post
+git add "${filename}"
+git mv "${filename}" "${archive}/${outfilename}"
+
+echo "${filename} scheduled for ${day}!"
+#bat "${postsdir}/${outfilename}"
+
+

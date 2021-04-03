@@ -1,0 +1,12 @@
+#!/bin/bash
+
+today=$(date +"%Y-%m-%d")
+sunday=$(date -d "${today} -$(date -d ${today} +%u) days" +"%Y-%m-%d")
+
+for m in {0..3}; do
+    for d in {0..6}; do
+        tmpdate=$(date -d "${sunday} + ${d} days" +"%Y-%m-%d")
+        ls ${tmpdate}* 2> /dev/null
+    done
+    sunday=$(date -d "${sunday} + 7 days" +"%Y-%m-%d")
+done
