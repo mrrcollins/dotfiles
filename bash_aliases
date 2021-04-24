@@ -17,8 +17,11 @@ alias gs="git status -s"
 alias gl="git log --stat"
 alias rst="sed -i 's/ *@done\(.*\)//g'"
 
+#todo.txt and tasks
+alias t='todo.sh'
 alias nsync='cd ~/notes;. notesync.sh;cd -'
-alias tl='vim ~/notes/Lists/goztoday.taskpaper'
+alias tl='cd ~/notes/Lists;vim todo.txt;cd -'
+alias today='todo.sh ls | grep "(.) "'
 alias dl='vim ~/notes/Lists/gozdaily.taskpaper'
 alias dtl='vim -O ~/notes/Lists/gozdaily.taskpaper ~/notes/Lists/goztoday.taskpaper'
 alias tips="vim -c "Toc" ~/notes/Notes/tips.markdown"
@@ -41,7 +44,6 @@ alias b='brantley'
 alias ba='brantley add'
 alias bl='brantley ls'
 alias blt='brantley ls today'
-alias today='brantley ls today'
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
