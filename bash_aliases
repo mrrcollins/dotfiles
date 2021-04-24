@@ -33,8 +33,8 @@ alias menu='~/notes/gozprod.sh'
 alias gj="gozjournal"
 #alias j='echo -e "\n" >> ~/notes/Journal/`date +"%Y"`.markdown;vim + +startinsert ~/notes/Journal/`date +"%Y"`.markdown'
 alias j='vim + +startinsert ~/notes/Journal/`date +"%Y"`.markdown'
-alias jt="tac ~/notes/Journal/`date +%Y`.markdown |awk '!flag; /^\#/{flag=1};' | tac"
-alias tj='vim -O + ~/notes/Journal/`date +"%Y"`.markdown ~/notes/Lists/goztoday.taskpaper'
+#alias jt="tac ~/notes/Journal/`date +%Y`.markdown |awk '!flag; /^\#/{flag=1};' | tac"
+alias tj='vim -O + ~/notes/Journal/`date +"%Y"`.markdown ~/notes/Lists/todo.txt'
 
 # tmux aliases
 
