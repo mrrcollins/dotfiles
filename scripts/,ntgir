@@ -23,15 +23,15 @@ fi
 
 TITLE="$@"
 AUTHOR="`whoami`"
-DATE=`date +"%Y-%m-%d %H:%M"`
+DATE=`date +"%Y-%m-%dT%H:%M:00-04:00"`
 EDITOR="vim + +startinsert"
 DEFAULTFOLDER="."
-EXT="markdown"
-PREPEND="`date +%y%m%d`-"
+EXT="md"
+PREPEND="`date +%Y-%m-%d`-"
 SLUG=$(echo -n "${TITLE}" | sed -e 's/[^[:alnum:]]/-/g' | tr -s '-' | tr A-Z a-z)
 
 if [[ ! -f ${DEFAULTFOLDER}/${PREPEND}${SLUG}.${EXT} ]]; then
-    echo -e "---\nTitle: ${TITLE}\nAuthor: ${AUTHOR}\nDate: ${DATE}\nSlug: ${SLUG}\nCategory: \nTags:\nStatus: draft\n---\n\n" > "${DEFAULTFOLDER}/${PREPEND}${SLUG}.${EXT}"
+    echo -e "---\nTitle: ${TITLE}\nAuthor: ${AUTHOR}\nDate: ${DATE}\nSlug: ${SLUG}\nCategory: \nTags:\nStatus: draft\nfeatured_image: \n---\n\n" > "${DEFAULTFOLDER}/${PREPEND}${SLUG}.${EXT}"
 fi
 
 ${EDITOR} "${DEFAULTFOLDER}/${PREPEND}${SLUG}.${EXT}"

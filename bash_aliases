@@ -2,10 +2,10 @@
 alias duf='du -sk * | sort -n | perl -ne '\''($s,$f)=split(m{\t});for (qw(K M G)) {if($s<1024) {printf("%.1f",$s);print "$_\t$f"; last};$s=$s/1024}'\'
 alias ls='ls -FX'
 
-alias .="clear && ls"
-alias ..="cd .. && clear && ls"
-alias ...="cd ../.. && clear && ls"
-alias ....="cd ../../.. && clear && ls"
+alias .="ls"
+alias ..="cd .. && ls"
+alias ...="cd ../.. && ls"
+alias ....="cd ../../.. && ls"
 
 # Vim
 alias v='vim $(fzf)'
@@ -17,19 +17,24 @@ alias gs="git status -s"
 alias gl="git log --stat"
 alias rst="sed -i 's/ *@done\(.*\)//g'"
 
+#todo.txt and tasks
+alias t='todo.sh'
 alias nsync='cd ~/notes;. notesync.sh;cd -'
-alias tl='vim ~/notes/Lists/goztoday.taskpaper'
+alias tl='cd ~/notes/Lists;vim todo.txt;cd -'
+alias today='todo.sh ls | grep "(.) "'
 alias dl='vim ~/notes/Lists/gozdaily.taskpaper'
 alias dtl='vim -O ~/notes/Lists/gozdaily.taskpaper ~/notes/Lists/goztoday.taskpaper'
 alias tips="vim -c "Toc" ~/notes/Notes/tips.markdown"
 alias ideas="vim -c "Toc" ~/notes/Notes/ideas.markdown"
 alias gn="cd ~/notes"
-alias jt="tac ~/notes/Journal/`date +%Y`.markdown |awk '!flag; /^\#/{flag=1};' | tac"
 alias menu='~/notes/gozprod.sh'
 
+# Journal Aliases
 alias gj="gozjournal"
-alias j='echo -e "\n" >> ~/notes/Journal/`date +"%Y"`.markdown;vim + +startinsert ~/notes/Journal/`date +"%Y"`.markdown'
-alias tj='vim -O + ~/notes/Journal/`date +"%Y"`.markdown ~/notes/Lists/goztoday.taskpaper'
+#alias j='echo -e "\n" >> ~/notes/Journal/`date +"%Y"`.markdown;vim + +startinsert ~/notes/Journal/`date +"%Y"`.markdown'
+alias j='vim + +startinsert ~/notes/Journal/`date +"%Y"`.markdown'
+#alias jt="tac ~/notes/Journal/`date +%Y`.markdown |awk '!flag; /^\#/{flag=1};' | tac"
+alias tj='vim -O + ~/notes/Journal/`date +"%Y"`.markdown ~/notes/Lists/todo.txt'
 
 # tmux aliases
 
@@ -39,7 +44,6 @@ alias b='brantley'
 alias ba='brantley add'
 alias bl='brantley ls'
 alias blt='brantley ls today'
-alias today='brantley ls today'
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
