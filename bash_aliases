@@ -64,4 +64,6 @@ alias la='ls -AN'
 
 alias yt2mp3="youtube-dl -x --audio-format mp3"
 
+alias savepage="wget -E -H -k -K -p -e robots=off"
+
 gam() { "/home/collinsr/bin/gam/gam" "$@" ; }

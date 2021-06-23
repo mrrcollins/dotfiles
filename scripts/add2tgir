@@ -1,3 +1,29 @@
 #!/bin/bash
 
-echo "${1}" >> ~/notes/BlogPosts/TGiW.markdown
+#echo "${1}" >> ~/notes/BlogPosts/TGiW.markdown
+
+today=`date +"%Y-%m-%d %H:%M"`
+url=${1}
+#url="https://www.imdb.com/title/tt0183790/?ref_=fn_al_tt_1"
+
+title=$(wget -qO- "${url}" | perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si')
+slug=$(echo -n "${title}" | sed -e 's/[^[:alnum:]]/-/g' | tr -s '-' | tr A-Z a-z)
+echo "Adding ${title}..."
+#echo "${slug}"
+
+cd ~/notes/BlogPosts/tgir
+
+# Put header on top
+cat > "${slug}.md"<< EOF
+---
+Title: ${title}
+Author: goz
+Date: ${today}
+Category:
+Tags:
+- Asides
+---
+
+[${title}](${url})
+EOF
+

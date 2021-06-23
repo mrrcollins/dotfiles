@@ -5,3 +5,4 @@ export PATH=/home/goz/.go/bin:$PATH
 export GOPATH=/home/goz/go
 
 export PATH=/home/goz/go/bin:$PATH
+if [ -e /home/goz/.nix-profile/etc/profile.d/nix.sh ]; then . /home/goz/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
