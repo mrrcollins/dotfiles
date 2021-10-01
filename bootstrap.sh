@@ -1,6 +1,6 @@
 #!/bin/bash
 
-apps="vim git tmux mosh socat"
+apps="vim git tmux mosh socat curl rsync"
 
 ostype=$(uname -a)
 uname -a | grep -q Android
