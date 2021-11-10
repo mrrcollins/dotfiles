@@ -4,6 +4,16 @@
 
 today=`date +"%Y-%m-%d %H:%M"`
 url=${1}
+dow=$(date +"%u")
+if [ "${dow}" -eq 2 ] || [ "${dow}" -eq 3 ] || [ "${dow}" -eq 4 ];
+then
+    post="$(date -d "next friday + 1 week" +'%Y-%m-%d')-this-geek-in-review.md"
+    fri=$(date -d "next friday + 1 week" +'%Y-%m-%d')
+else
+    post="$(date -d "next friday" +'%Y-%m-%d')-this-geek-in-review.md"
+    fri=$(date -d "next friday" +'%Y-%m-%d')
+fi
+
 #url="https://www.imdb.com/title/tt0183790/?ref_=fn_al_tt_1"
 
 title=$(wget -qO- "${url}" | perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si')
@@ -14,19 +24,42 @@ slug=$(echo -n "${title}" | sed -e 's/[^[:alnum:]]/-/g' | tr -s '-' | tr A-Z a-z
 echo "Adding ${title}..."
 #echo "${slug}"
 
-cd ~/notes/BlogPosts/tgir
+cd "${HOME}/notes/BlogPosts/tgir"
 
+if [ ! -f "${post}" ]
+then
 # Put header on top
-cat > "${slug}.md"<< EOF
+cat > "${post}"<< EOF
 ---
-Title: ${title}
+Title: This Geek in Review for ${fri}
 Author: goz
-Date: ${today}
+Date: ${fri}T09:45:00-04:00
 Category:
+Slug: this-geek-review-${fri}
 Tags:
 - Asides
+- tgir
+Summary: 
+featured_image:
 ---
 
-[${title}](${url})
-EOF
+## Internet Travels
 
+### Geek
+
+
+### Retro
+
+
+### Technology
+
+
+### Pop Culture
+
+
+### Pot Pourri
+
+EOF
+fi
+
+echo "* [${title}](${url})" >> ${post}
