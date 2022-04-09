@@ -7,10 +7,10 @@ url=${1}
 dow=$(date +"%u")
 if [ "${dow}" -eq 2 ] || [ "${dow}" -eq 3 ] || [ "${dow}" -eq 4 ];
 then
-    post="$(date -d "next friday + 1 week" +'%Y-%m-%d')-tgir.md"
+    post="$(date -d "next friday + 1 week" +'%Y-%m-%d')-this-geek-in-review.md"
     fri=$(date -d "next friday + 1 week" +'%Y-%m-%d')
 else
-    post="$(date -d "next friday" +'%Y-%m-%d')-tgir.md"
+    post="$(date -d "next friday" +'%Y-%m-%d')-this-geek-in-review.md"
     fri=$(date -d "next friday" +'%Y-%m-%d')
 fi
 
@@ -31,7 +31,7 @@ then
 # Put header on top
 cat > "${post}"<< EOF
 ---
-Title: "This Geek in Review for ${fri}"
+Title: This Geek in Review for ${fri}
 Author: goz
 Date: ${fri}T09:45:00-04:00
 Category:
@@ -39,9 +39,8 @@ Slug: this-geek-review-${fri}
 Tags:
 - Asides
 - tgir
-Summary: ""
-featured_image: ""
-images: [ "" ]
+Summary: 
+featured_image:
 ---
 
 ## Internet Travels
@@ -52,10 +51,7 @@ images: [ "" ]
 ### Retro
 
 
-### Videogames
-
-
-### Science & Technology
+### Technology
 
 
 ### Pop Culture
