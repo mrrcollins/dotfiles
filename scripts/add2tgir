@@ -5,7 +5,9 @@
 today=`date +"%Y-%m-%d %H:%M"`
 url=${1}
 dow=$(date +"%u")
-if [ "${dow}" -eq 2 ] || [ "${dow}" -eq 3 ] || [ "${dow}" -eq 4 ];
+
+#if [ "${dow}" -eq 2 ] || [ "${dow}" -eq 3 ] || [ "${dow}" -eq 4 ];
+if [ "${dow}" -eq 4 ];
 then
     post="$(date -d "next friday + 1 week" +'%Y-%m-%d')-tgir.md"
     fri=$(date -d "next friday + 1 week" +'%Y-%m-%d')
@@ -55,7 +57,10 @@ images: [ "" ]
 ### Videogames
 
 
-### Science & Technology
+### Technology
+
+
+### Science
 
 
 ### Pop Culture
