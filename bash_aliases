@@ -23,6 +23,7 @@ alias nsync='cd ~/notes;. notesync.sh;cd -'
 alias tl='cd ~/notes/Lists;vim todo.txt;cd -'
 #alias today='todo.sh ls | grep "(.) "'
 alias today='t lsp'
+alias alltoday="t lsp;grep @today ~/notes/Lists/*.taskpaper |grep -v @done | sed 's/\/home\/goz\/notes\/Lists\///'"
 alias dl='vim ~/notes/Lists/gozdaily.taskpaper'
 alias dtl='vim -O ~/notes/Lists/gozdaily.taskpaper ~/notes/Lists/goztoday.taskpaper'
 alias tips="vim -c "Toc" ~/notes/Notes/tips.markdown"
