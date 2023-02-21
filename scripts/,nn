@@ -26,7 +26,7 @@ fi
 
 TITLE="$@"
 AUTHOR="`whoami`"
-DATE=`date +"%Y-%m-%d %H:%M"`
+DATE=`date +"%Y-%m-%d %T"`
 EDITOR="vim + +startinsert"
 DEFAULTFOLDER="."
 EXT="md"
@@ -39,10 +39,11 @@ if [[ ! -f ${DEFAULTFOLDER}/${PREPEND}${SLUG}.${EXT} ]]; then
 echo -e "---
 Title: \"${TITLE}\"
 Author: ${AUTHOR}
-Date: ${DATE}
+Date: \"${DATE}\"
 Slug: ${SLUG}
 Category: 
 Tags:
+- rss
 Status: draft
 Summary: \"\"
 featured_image: \"\"

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+cd ${HOME}/Movies
+filename=$(/usr/local/bin/yt-dlp --user-agent facebookexternalhit/1.1 --windows-filenames --get-filename "${1}")
+file="${filename:0:33}-${filename: -24}.${filename##*.}"
+
+#echo "${file}"
+
+/usr/local/bin/yt-dlp --user-agent facebookexternalhit/1.1 --windows-filenames -o "${file}" "${1}"
+
+telegram-send --video "${file}" --caption "${filename}"

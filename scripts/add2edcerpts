@@ -1,17 +1,18 @@
 #!/bin/bash
 
-#echo "${1}" >> ~/notes/BlogPosts/TGiW.markdown
-
-today=`date +"%Y-%m-%d %H:%M"`
 url=${1}
+surl=$(~/.virtualenvs/yourls/bin/yourls shorten -s ${url} | cut -d " " -f2)
 dow=$(date +"%u")
-if [ "${dow}" -eq 2 ] || [ "${dow}" -eq 3 ] || [ "${dow}" -eq 4 ];
+
+if [ "${dow}" -eq 6 ] || [ "${dow}" -eq 7 ];
 then
-    post="$(date -d "next friday + 1 week" +'%Y-%m-%d')-this-geek-in-review.md"
-    fri=$(date -d "next friday + 1 week" +'%Y-%m-%d')
+    post="$(date -d "next monday + 1 week" +'%Y-%m-%d')-edlinks.md"
+    dayofpost=$(date -d "next monday + 1 week" +'%Y-%m-%d')
+    pd=$(date -d "next monday +1 week" +"%B %e, %Y")
 else
-    post="$(date -d "next friday" +'%Y-%m-%d')-this-geek-in-review.md"
-    fri=$(date -d "next friday" +'%Y-%m-%d')
+    post="$(date -d "next monday" +'%Y-%m-%d')-edlinks.md"
+    dayofpost=$(date -d "next monday" +'%Y-%m-%d')
+    pd=$(date -d "next monday" +"%B %e, %Y")
 fi
 
 #url="https://www.imdb.com/title/tt0183790/?ref_=fn_al_tt_1"
@@ -24,34 +25,29 @@ slug=$(echo -n "${title}" | sed -e 's/[^[:alnum:]]/-/g' | tr -s '-' | tr A-Z a-z
 echo "Adding ${title}..."
 #echo "${slug}"
 
-cd "${HOME}/notes/BlogPosts/tgir"
+cd "${HOME}/notes/BlogPosts/eduk8me"
 
 if [ ! -f "${post}" ]
 then
 # Put header on top
 cat > "${post}"<< EOF
----
-Title: This Geek in Review for ${fri}
-Author: goz
-Date: ${fri}T09:45:00-04:00
-Category:
-Slug: this-geek-review-${fri}
-Tags:
-- Asides
-- tgir
-Summary: 
-featured_image:
----
+Title: "Edcerpts for ${pd}"
+Date: "${dayofpost} 12:30:00"
 
 ## Internet Travels
 
-### Geek
+_Edcerpts are my weekly round up of interesting links and ideas I discovered on the internet. It is published on Mondays for the previous week_
+
+### Apps
 
 
-### Retro
+### Pedagogy
 
 
 ### Technology
+
+
+### Tips
 
 
 ### Pop Culture
@@ -60,9 +56,12 @@ featured_image:
 ### Pot Pourri
 
 
+![Ryan Signature](https://eduk8.me/wp-content/uploads/2020/06/SignatureRyan.png)
+
+Be sure to subscribe to my [YouTube channel](https://go.eduk8.me/youtube) and join your fellow educators on the [Eduk8me email list](https://eduk8.me/welcome)!
 --
 
 EOF
 fi
 
-echo "* [${title}](${url})" >> ${post}
+echo "* [${title}](${surl})" >> ${post}

@@ -7,13 +7,13 @@ url=${1}
 dow=$(date +"%u")
 
 #if [ "${dow}" -eq 2 ] || [ "${dow}" -eq 3 ] || [ "${dow}" -eq 4 ];
-if [ "${dow}" -eq 4 ];
+if [ "${dow}" -eq 3 ];
 then
-    post="$(date -d "next friday + 1 week" +'%Y-%m-%d')-tgir.md"
-    fri=$(date -d "next friday + 1 week" +'%Y-%m-%d')
+    post="$(date -d "next thursday + 1 week" +'%Y-%m-%d')-edphotos.md"
+    wed=$(date -d "next thursday + 1 week" +'%Y-%m-%d')
 else
-    post="$(date -d "next friday" +'%Y-%m-%d')-tgir.md"
-    fri=$(date -d "next friday" +'%Y-%m-%d')
+    post="$(date -d "next thursday" +'%Y-%m-%d')-edphotos.md"
+    wed=$(date -d "next thursday" +'%Y-%m-%d')
 fi
 
 #url="https://www.imdb.com/title/tt0183790/?ref_=fn_al_tt_1"
@@ -26,53 +26,26 @@ slug=$(echo -n "${title}" | sed -e 's/[^[:alnum:]]/-/g' | tr -s '-' | tr A-Z a-z
 echo "Adding ${title}..."
 #echo "${slug}"
 
-cd "${HOME}/notes/BlogPosts/tgir"
+cd "${HOME}/notes/BlogPosts/eduk8me"
 
 if [ ! -f "${post}" ]
 then
 # Put header on top
 cat > "${post}"<< EOF
 ---
-Title: "This Geek in Review for ${fri}"
+Title: "📷 Ed photos of the week for ${wed}"
 Author: goz
-Date: ${fri}T09:45:00-04:00
+Date: ${wed}T09:45:00-04:00
 Category:
-Slug: this-geek-review-${fri}
+Slug: ed-photos-${wed}
 Tags:
-- geek
-- tgir
-- rss
-Summary: ""
-featured_image: ""
-images: [ "" ]
+- geekphotos
+Summary: "A random assortment of education related graphics I stumbled across this week."
 ---
 
-## Internet Travels
-
-### Geek
-
-
-### Retro
-
-
-### Videogames
-
-
-### Technology
-
-
-### Science
-
-
-### Pop Culture
-
-
-### Pot Pourri
-
-
---
+## Ed photos for the week
 
 EOF
 fi
 
-echo "* [${title}](${url})" >> ${post}
+echo -e "### [${title}](${url})\n\n![]()\n\n***\n" >> ${post}
