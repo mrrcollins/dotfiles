@@ -7,14 +7,15 @@ url=${1}
 dow=$(date +"%u")
 
 #if [ "${dow}" -eq 2 ] || [ "${dow}" -eq 3 ] || [ "${dow}" -eq 4 ];
-if [ "${dow}" -eq 2 ];
-then
-    post="$(date -d "next wednesday + 1 week" +'%Y-%m-%d')-geekphotos.md"
-    wed=$(date -d "next wednesday + 1 week" +'%Y-%m-%d')
-else
-    post="$(date -d "next wednesday" +'%Y-%m-%d')-geekphotos.md"
-    wed=$(date -d "next wednesday" +'%Y-%m-%d')
-fi
+
+##if [ "${dow}" -eq 1 ] || [ "${dow}" -eq 2 ];
+##then
+    post="$(date -d "next wednesday + 2 week" +'%Y-%m-%d')-geekphotos.md"
+    wed=$(date -d "next wednesday + 2 week" +'%Y-%m-%d')
+##else
+##    post="$(date -d "next wednesday + 1 week" +'%Y-%m-%d')-geekphotos.md"
+##    wed=$(date -d "next wednesday + 1 week" +'%Y-%m-%d')
+##fi
 
 #url="https://www.imdb.com/title/tt0183790/?ref_=fn_al_tt_1"
 

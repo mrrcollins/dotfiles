@@ -1,10 +1,14 @@
 #!/bin/bash
 
-url=${1}
+url="${1}"
+[ ! -z "${2}" ] && ht="${2}"
+#unshorten=$(curl -sLI ${url} | grep -i Location | cut -d " " -f 2)
+#echo ${unshorten}
 surl=$(~/.virtualenvs/yourls/bin/yourls shorten -s ${url} | cut -d " " -f2)
+surl="${url}"
 dow=$(date +"%u")
 
-if [ "${dow}" -eq 6 ] || [ "${dow}" -eq 7 ];
+if [ "${dow}" -eq 5 ] || [ "${dow}" -eq 6 ] || [ "${dow}" -eq 7 ];
 then
     post="$(date -d "next monday + 1 week" +'%Y-%m-%d')-edlinks.md"
     dayofpost=$(date -d "next monday + 1 week" +'%Y-%m-%d')
@@ -31,12 +35,12 @@ if [ ! -f "${post}" ]
 then
 # Put header on top
 cat > "${post}"<< EOF
-Title: "Edcerpts for ${pd}"
-Date: "${dayofpost} 12:30:00"
+Title: "Of bits and bytes for ${pd}"
+Date: "${dayofpost} 12:10:00"
 
 ## Internet Travels
 
-_Edcerpts are my weekly round up of interesting links and ideas I discovered on the internet. It is published on Mondays for the previous week_
+_Of bits and bytes is my weekly round up of interesting links and ideas I discovered on the internet. It is published on Mondays for the previous week_
 
 ### Apps
 
@@ -56,6 +60,13 @@ _Edcerpts are my weekly round up of interesting links and ideas I discovered on 
 ### Pot Pourri
 
 
+### Extra Credit
+
+__Here are extra links that I found interesting that may or may not be education related or interesting to you and I didn't want to lose them.__
+
+
+---
+
 ![Ryan Signature](https://eduk8.me/wp-content/uploads/2020/06/SignatureRyan.png)
 
 Be sure to subscribe to my [YouTube channel](https://go.eduk8.me/youtube) and join your fellow educators on the [Eduk8me email list](https://eduk8.me/welcome)!
@@ -64,4 +75,14 @@ Be sure to subscribe to my [YouTube channel](https://go.eduk8.me/youtube) and jo
 EOF
 fi
 
-echo "* [${title}](${surl})" >> ${post}
+if [ ! -z ${ht} ]
+then
+    httitle=" h/t - "
+    newtitle=$(wget -qO- "${ht}" | perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si')
+    [ -z "${newtitle}" ] && newtitle="${ht}"
+    httitle+="[${newtitle}](${ht})"
+else
+    httitle=""
+fi
+
+echo "* [${title}](${surl})${httitle}" >> ${post}

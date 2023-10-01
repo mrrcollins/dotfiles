@@ -7,14 +7,17 @@ url=${1}
 dow=$(date +"%u")
 
 #if [ "${dow}" -eq 2 ] || [ "${dow}" -eq 3 ] || [ "${dow}" -eq 4 ];
-if [ "${dow}" -eq 3 ];
-then
-    post="$(date -d "next thursday + 1 week" +'%Y-%m-%d')-edphotos.md"
-    wed=$(date -d "next thursday + 1 week" +'%Y-%m-%d')
-else
-    post="$(date -d "next thursday" +'%Y-%m-%d')-edphotos.md"
-    wed=$(date -d "next thursday" +'%Y-%m-%d')
-fi
+
+##if [ "${dow}" -eq 1 ] || [ "${dow}" -eq 2 ] || [ "${dow}" -eq 3 ];
+##then
+    post="$(date -d "next thursday + 2 week" +'%Y-%m-%d')-edphotos.md"
+    wed=$(date -d "next thursday + 2 week" +'%Y-%m-%d')
+    pd=$(date -d "next thursday + 2 week" +"%B %e, %Y")
+##else
+##    post="$(date -d "next thursday + 1 week" +'%Y-%m-%d')-edphotos.md"
+##    wed=$(date -d "next thursday + 1 week" +'%Y-%m-%d')
+##    pd=$(date -d "next thursday + 1 week" +"%B %e, %Y")
+##fi
 
 #url="https://www.imdb.com/title/tt0183790/?ref_=fn_al_tt_1"
 
@@ -32,16 +35,8 @@ if [ ! -f "${post}" ]
 then
 # Put header on top
 cat > "${post}"<< EOF
----
-Title: "📷 Ed photos of the week for ${wed}"
-Author: goz
-Date: ${wed}T09:45:00-04:00
-Category:
-Slug: ed-photos-${wed}
-Tags:
-- geekphotos
-Summary: "A random assortment of education related graphics I stumbled across this week."
----
+Title: "📷 Ed photos of the week for ${pd}"
+Date: "${wed} 12:10:00"
 
 ## Ed photos for the week
 

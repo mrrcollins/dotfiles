@@ -4,6 +4,7 @@
 
 today=`date +"%Y-%m-%d %H:%M"`
 url=${1}
+[ ! -z "${2}" ] && ht="${2}"
 dow=$(date +"%u")
 
 #if [ "${dow}" -eq 2 ] || [ "${dow}" -eq 3 ] || [ "${dow}" -eq 4 ];
@@ -75,4 +76,14 @@ images: [ "" ]
 EOF
 fi
 
-echo "* [${title}](${url})" >> ${post}
+if [ ! -z ${ht} ]
+then
+    httitle=" h/t - "
+    newtitle=$(wget -qO- "${ht}" | perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si')
+    [ -z "${newtitle}" ] && newtitle="${ht}"
+    httitle+="[${newtitle}](${ht})"
+else
+    httitle=""
+fi
+
+echo "* [${title}](${url})${httitle}" >> ${post}
