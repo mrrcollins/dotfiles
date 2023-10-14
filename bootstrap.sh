@@ -30,6 +30,13 @@ elif [[ "$ostype" =~ "Darwin" ]]; then
     else
        echo "~/.config/iterm2prefs already exists..."
     fi
+    # Specify the preferences directory
+    defaults write com.googlecode.iterm2 PrefsCustomFolder -string "~/.dotfiles/System/iTerm/settings"
+    #
+    # Tell iTerm2 to use the custom preferences in the directory
+    defaults write com.googlecode.iterm2 LoadPrefsFromCustomFolder -bool true
+
+    echo "Get some files..."
     cd ~/Downloads
     rsync -avp venkman:~/.config/macOS/ .
     cd
