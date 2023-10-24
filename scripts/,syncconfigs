@@ -19,6 +19,7 @@ do
     git commit -am "Git Sync `date` on `hostname` $gstatus"
     git pull
     git push
+    echo "Done with ${repo}!\n"
     cd ..
 done
 
