@@ -1,0 +1,38 @@
+#!/bin/bash
+
+ostype=$(uname -a)
+
+if [[ "$ostype" =~ "Darwin" ]]; then
+    repos=("espanso" "iterm2prefs" "alfredprefs" "dotfiles")
+else
+    repos=("dotfiles")
+fi
+
+cd "${HOME}/.config"
+
+for i in ${!repos[@]};
+do
+    repo=${repos[$i]}
+    echo "Working on ${repo}..."
+    cd "${repo}"
+    git add --all
+    git commit -am "Git Sync `date` on `hostname` $gstatus"
+    git pull
+    git push
+    cd ..
+done
+
+echo "Sync ssh repo..."
+cd "${HOME}/.ssh"
+    git add --all
+    git commit -am "Git Sync `date` on `hostname` $gstatus"
+    git pull
+    git push
+
+echo "Sync Vim..."
+cd "${HOME}/.vim"
+    git add --all
+    git commit -am "Git Sync `date` on `hostname` $gstatus"
+    git pull
+    git push
+
