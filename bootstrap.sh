@@ -18,6 +18,28 @@ elif [[ "$ostype" =~ "Darwin" ]]; then
     brew update
     brew upgrade
 	brew install $apps
+    echo "Clone alfredprefs"
+    if [ ! -d ~/.config/alfredprefs ]; then
+       git clone --quiet git@github.com:mrrcollins/alfredprefs.git ~/.config/alfredprefs
+    else
+       echo "~/.config/alfredprefs already exists..."
+    fi
+    echo "Clone iterm2prefs"
+    if [ ! -d ~/.config/iterm2prefs ]; then
+       git clone --quiet git@github.com:mrrcollins/iterm2prefs.git ~/.config/iterm2prefs
+    else
+       echo "~/.config/iterm2prefs already exists..."
+    fi
+    # Specify the preferences directory
+    defaults write com.googlecode.iterm2 PrefsCustomFolder -string "~/.dotfiles/System/iTerm/settings"
+    #
+    # Tell iTerm2 to use the custom preferences in the directory
+    defaults write com.googlecode.iterm2 LoadPrefsFromCustomFolder -bool true
+
+    echo "Get some files..."
+    cd ~/Downloads
+    rsync -avp venkman:~/.config/macOS/ .
+    cd
 elif [ ! $android ]; then
     apt update
 	apt install $apps
@@ -39,6 +61,14 @@ if [ ! -d ~/.vim ]; then
 else
     echo "~/.vim already exists..."
 fi
+
+echo "Clone Espanso"
+if [ ! -d ~/.config/espanso ]; then
+   git clone --quiet git@github.com:mrrcollins/espanso.git ~/.config/espanso
+else
+   echo "~/.config/espanso already exists..."
+fi
+
 
 cd ~
 
