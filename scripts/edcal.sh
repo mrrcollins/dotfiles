@@ -15,6 +15,7 @@ fi
 
 temp="##############"
 
+echo "|--   MON    --|--   TUE    --|--   WED    --|--   THR    --|--   FRI    --|--   SAT    --|--   SUN    --|"
 for day in {0..29..7}
 do
     dateline=""
@@ -24,7 +25,7 @@ do
     for dow in {0..6}
     do
         calcday=$(($day + $dow))
-        tday=$(faketime "${first}" date -d "${calcday} day" +"%Y-%m-%d")
+        tday=$(faketime "${first} 12:00:00" date -d "${calcday} day" +"%Y-%m-%d")
         file=$(grep -i ^date\: *.md | grep "${tday}" | cut -d ":" -f 1)
 
         if [[ ${file:0:2} == "20" ]]; then
