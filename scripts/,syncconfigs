@@ -1,11 +1,12 @@
 #!/bin/bash
 
 ostype=$(uname -a)
+cdir="${HOME}/.config"
 
 if [[ "$ostype" =~ "Darwin" ]]; then
-    repos=("espanso" "iterm2prefs" "alfredprefs" "dotfiles")
+    repos=("${cdir}/espanso" "${cdir}/iterm2prefs" "${cdir}/alfredprefs" "${cdir}/dotfiles" "${cdir}/.ssh" "${cdir}/.vim")
 else
-    repos=("dotfiles")
+    repos=("${cdir}/dotfiles" "${cdir}/.ssh" "${cdir}/.vim")
 fi
 
 cd "${HOME}/.config"
@@ -13,27 +14,14 @@ cd "${HOME}/.config"
 for i in ${!repos[@]};
 do
     repo=${repos[$i]}
-    echo "Working on ${repo}..."
-    cd "${repo}"
-    git add --all
-    git commit -am "Git Sync `date` on `hostname` $gstatus"
-    git pull
-    git push
-    echo "Done with ${repo}!\n"
-    cd ..
+    if [ -d "${repo}" ] && [ ! -f "${repo}/nosync" ]; then
+        echo "Working on ${repo}..."
+        cd "${repo}"
+        git add --all
+        git commit -am "Git Sync `date` on `hostname` $gstatus"
+        git pull
+        git push
+        echo "Done with ${repo}!\n"
+    fi
 done
-
-echo "Sync ssh repo..."
-cd "${HOME}/.ssh"
-    git add --all
-    git commit -am "Git Sync `date` on `hostname` $gstatus"
-    git pull
-    git push
-
-echo "Sync Vim..."
-cd "${HOME}/.vim"
-    git add --all
-    git commit -am "Git Sync `date` on `hostname` $gstatus"
-    git pull
-    git push
 
