@@ -14,6 +14,7 @@ cd "${HOME}/.config"
 for i in ${!repos[@]};
 do
     repo="${repos[$i]}"
+    echo "${repo}"
     if [ -d "${repo}" ] && [ ! -f "${repo}/nosync" ]; then
         echo "Working on ${repo}..."
         cd "${repo}"
