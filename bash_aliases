@@ -38,6 +38,8 @@ alias j='vim + +startinsert ~/notes/Journal/`date +"%Y"`.markdown'
 #alias jt="tac ~/notes/Journal/`date +%Y`.markdown |awk '!flag; /^\#/{flag=1};' | tac"
 alias tj='vim -O + ~/notes/Journal/`date +"%Y"`.markdown ~/notes/Lists/todo.txt'
 
+alias dj='vim + +startinsert ~/notes/Journal/`date +"%Y"`-dev.md'
+
 # tmux aliases
 
 alias tma="tmux new -ADs"
