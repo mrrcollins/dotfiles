@@ -21,6 +21,9 @@ do
         git commit -am "Git Sync `date` on `hostname` $gstatus"
         git pull
         git push
+        if [[ "${repo}" =~ vim ]]; then
+            for i in ~/.vim/bundle/*; do git -C $i pull; done
+        fi
         echo "Done with ${repo}!\n"
     fi
 done
