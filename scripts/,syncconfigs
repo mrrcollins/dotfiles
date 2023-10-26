@@ -17,7 +17,7 @@ do
     if [ -d "${repo}" ] && [ ! -f "${repo}/nosync" ]; then
         echo -en "Working on ${repo}... "
         cd "${repo}"
-        git add --all --quiet
+        git add --all
         git commit -am "Git Sync `date` on `hostname` $gstatus" --quiet
         git pull --quiet
         git push --quiet
