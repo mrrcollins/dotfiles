@@ -15,16 +15,16 @@ for i in ${!repos[@]};
 do
     repo="${repos[$i]}"
     if [ -d "${repo}" ] && [ ! -f "${repo}/nosync" ]; then
-        echo "Working on ${repo}..."
+        echo -en "Working on ${repo}... "
         cd "${repo}"
-        git add --all
-        git commit -am "Git Sync `date` on `hostname` $gstatus"
-        git pull
-        git push
+        git add --all --quiet
+        git commit -am "Git Sync `date` on `hostname` $gstatus" --quiet
+        git pull --quiet
+        git push --quiet
         if [[ "${repo}" =~ vim ]]; then
-            for i in ~/.vim/bundle/*; do git -C $i pull; done
+            for i in ~/.vim/bundle/*; do git -C $i pull --quiet ; done
         fi
-        echo "Done with ${repo}!\n"
+        echo "Done with ${repo}!"
     fi
 done
 
