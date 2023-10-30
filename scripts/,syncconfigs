@@ -3,11 +3,7 @@
 ostype=$(uname -a)
 cdir="${HOME}/.config"
 
-if [[ "$ostype" =~ "Darwin" ]]; then
-    repos=("${cdir}/espanso" "${cdir}/iterm2prefs" "${cdir}/alfredprefs" "${cdir}/dotfiles" "${HOME}/.ssh" "${HOME}/.vim")
-else
-    repos=("${cdir}/espanso" "${cdir}/dotfiles" "${HOME}/.ssh" "${HOME}/.vim" "${cdir}/kitty")
-fi
+repos=("${cdir}/espanso" "${cdir}/iterm2prefs" "${cdir}/alfredprefs" "${cdir}/dotfiles" "${HOME}/.ssh" "${HOME}/.vim" "${cdir}/kitty")
 
 cd "${HOME}/.config"
 
