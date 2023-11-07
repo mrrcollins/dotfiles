@@ -19,7 +19,7 @@ alias rst="sed -i 's/ *@done\(.*\)//g'"
 
 #todo.txt and tasks
 alias t='todo.sh'
-alias nsync='cd ~/notes;. notesync.sh;cd -'
+alias nsync="cd ${HOME}/notes;bash notesync.sh;cd -"
 alias tl='cd ~/notes/Lists;vim todo.txt;cd -'
 #alias today='todo.sh ls | grep "(.) "'
 alias today='t lsp'
