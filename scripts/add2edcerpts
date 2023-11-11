@@ -1,0 +1,94 @@
+#!/bin/bash
+
+url="${1}"
+[ ! -z "${2}" ] && ht="${2}"
+#unshorten=$(curl -sLI ${url} | grep -i Location | cut -d " " -f 2)
+#echo ${unshorten}
+surl=$(~/.virtualenvs/yourls/bin/yourls shorten -s ${url} | cut -d " " -f2)
+surl="${url}"
+dow=$(date +"%u")
+
+if [ "${dow}" -eq 5 ] || [ "${dow}" -eq 6 ] || [ "${dow}" -eq 7 ];
+then
+    post="$(date -d "next monday + 1 week" +'%Y-%m-%d')-edlinks.md"
+    dayofpost=$(date -d "next monday + 1 week" +'%Y-%m-%d')
+    pd=$(date -d "next monday +1 week" +"%B %e, %Y")
+else
+    post="$(date -d "next monday" +'%Y-%m-%d')-edlinks.md"
+    dayofpost=$(date -d "next monday" +'%Y-%m-%d')
+    pd=$(date -d "next monday" +"%B %e, %Y")
+fi
+
+#url="https://www.imdb.com/title/tt0183790/?ref_=fn_al_tt_1"
+
+title=$(wget -qO- "${url}" | perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si')
+
+[ -z "${title}" ] && title="A new post added `date +'%Y-%m-%d-%H-%M'`"
+
+slug=$(echo -n "${title}" | sed -e 's/[^[:alnum:]]/-/g' | tr -s '-' | tr A-Z a-z)
+echo "Adding ${title}..."
+#echo "${slug}"
+
+cd "${HOME}/notes/BlogPosts/eduk8me"
+
+if [ ! -f "${post}" ]
+then
+# Put header on top
+cat > "${post}"<< EOF
+Title: "Of bits and bytes for ${pd}"
+Date: "${dayofpost} 12:10:00"
+
+## Internet Travels
+
+_Of bits and bytes is my weekly round up of interesting links and ideas I discovered on the internet. It is published on Mondays for the previous week_
+
+---
+[Learn21](https://learn21.org/) is a proud sponsor of Eduk8me and the Of Bits and Bytes newsletter. Read more about their mission at [Learn21](https://learn21.org/).
+---
+
+### Apps
+
+
+### Pedagogy
+
+
+### Technology
+
+
+### Tips
+
+
+### Pop Culture
+
+
+### Potpourri
+
+
+### Extra Credit
+
+__Here are extra links that I found interesting that may or may not be education related or interesting to you and I didn't want to lose them.__
+
+
+---
+
+By design, the vast majority of **Of Bits and Bytes** readers never pay anything for the links, commentary, and tips it provides. But you made it all the way to the end of this week’s edition — maybe not for the first time. Want to support more journalism like what you read today? If so, [click here](https://eduk8me.substack.com/subscribe).
+
+![Ryan Signature](https://eduk8.me/wp-content/uploads/2020/06/SignatureRyan.png)
+
+Be sure to subscribe to my [YouTube channel](https://go.eduk8.me/youtube) and join your fellow educators on the [Eduk8me email list](https://eduk8.me/welcome)!
+--
+
+EOF
+fi
+
+if [ ! -z ${ht} ]
+then
+    httitle=" h/t - "
+    newtitle=$(wget -qO- "${ht}" | perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si')
+    [ -z "${newtitle}" ] && newtitle="${ht}"
+    httitle+="[${newtitle}](${ht})"
+else
+    httitle=""
+fi
+
+echo "* [${title}](${surl})${httitle}" >> ${post}

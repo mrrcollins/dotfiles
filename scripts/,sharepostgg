@@ -1,0 +1,34 @@
+#!/bin/bash
+
+filename="${1}"
+fn=$(basename "${filename}")
+
+postsdir="${HOME}/Web/gozgeek.com/content/posts/$(date +"%Y")"
+archive="${HOME}/notes/Archive/$(date +"%Y")"
+
+day=$(date +"%Y-%m-%d")
+h=$(date +"%H")
+m=$(date +"%M")
+
+outfilename="${day}-${fn}"
+schedule="${day}T$(printf "%02d" ${h}):$(printf "%02d" ${m}):00-04:00"
+
+#echo "$postsdir $outfilename $schedule"
+# Put the file in the right place
+cp "${filename}" "${postsdir}/${outfilename}"
+
+# Add new schedule date and time
+sed -i "s/^Date: .*$/date: ${schedule}/" "${postsdir}/${outfilename}"
+echo "Scheduled for ${schedule}..."
+# Remove Status
+sed -i "/^Status: .*$/d" "${postsdir}/${outfilename}"
+
+# Archive post
+#git add "${filename}"
+mv "${filename}" "${archive}/${outfilename}"
+
+echo "${filename} scheduled for ${day} at ${h}:${m}!"
+#bat "${postsdir}/${outfilename}"
+
+cd "${HOME}/Web/gozgeek.com"
+./publish.sh

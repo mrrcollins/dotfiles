@@ -26,7 +26,7 @@ fi
 
 TITLE="$@"
 AUTHOR="`whoami`"
-DATE=`date +"%Y-%m-%d %H:%M"`
+DATE=`date +"%Y-%m-%d %T"`
 EDITOR="vim + +startinsert"
 DEFAULTFOLDER="."
 EXT="md"
@@ -36,7 +36,21 @@ SLUG=$(echo -n "${TITLE}" | sed -e 's/[^[:alnum:]]/-/g' | tr -s '-' | tr A-Z a-z
 if [[ "${TITLE:0:1}" == "2" ]]; then TITLE=${TITLE:11}; fi
 
 if [[ ! -f ${DEFAULTFOLDER}/${PREPEND}${SLUG}.${EXT} ]]; then
-    echo -e "---\nTitle: ${TITLE}\nAuthor: ${AUTHOR}\nDate: ${DATE}\nSlug: ${SLUG}\nCategory: \nTags:\nStatus: draft\n---\n\n" > "${DEFAULTFOLDER}/${PREPEND}${SLUG}.${EXT}"
+echo -e "---
+Title: \"${TITLE}\"
+Author: ${AUTHOR}
+Date: \"${DATE}\"
+Slug: ${SLUG}
+Category: 
+Tags:
+- rss
+Status: draft
+Summary: \"\"
+featured_image: \"\"
+images: [ \"\" ]
+---
+
+" > "${DEFAULTFOLDER}/${PREPEND}${SLUG}.${EXT}"
 fi
 
 ${EDITOR} "${DEFAULTFOLDER}/${PREPEND}${SLUG}.${EXT}"

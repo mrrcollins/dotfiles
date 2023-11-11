@@ -1,6 +1,6 @@
 #!/bin/bash
 
-dotfiles=(tmux.conf bash_aliases bash_profile bashrc)
+dotfiles=(tmux.conf bash_aliases bash_profile bashrc gitconfig)
 cwd=$(pwd)
 
 for i in "${dotfiles[@]}"; 

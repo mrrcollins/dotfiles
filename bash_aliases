@@ -19,9 +19,11 @@ alias rst="sed -i 's/ *@done\(.*\)//g'"
 
 #todo.txt and tasks
 alias t='todo.sh'
-alias nsync='cd ~/notes;. notesync.sh;cd -'
+alias nsync="cd ${HOME}/notes;bash notesync.sh;cd -"
 alias tl='cd ~/notes/Lists;vim todo.txt;cd -'
-alias today='todo.sh ls | grep "(.) "'
+#alias today='todo.sh ls | grep "(.) "'
+alias today='t lsp'
+alias alltoday="t lsp;grep @today ~/notes/Lists/*.taskpaper |grep -v @done | sed 's/\/home\/goz\/notes\/Lists\///'"
 alias dl='vim ~/notes/Lists/gozdaily.taskpaper'
 alias dtl='vim -O ~/notes/Lists/gozdaily.taskpaper ~/notes/Lists/goztoday.taskpaper'
 alias tips="vim -c "Toc" ~/notes/Notes/tips.markdown"
@@ -35,6 +37,8 @@ alias gj="gozjournal"
 alias j='vim + +startinsert ~/notes/Journal/`date +"%Y"`.markdown'
 #alias jt="tac ~/notes/Journal/`date +%Y`.markdown |awk '!flag; /^\#/{flag=1};' | tac"
 alias tj='vim -O + ~/notes/Journal/`date +"%Y"`.markdown ~/notes/Lists/todo.txt'
+
+alias dj='vim + +startinsert ~/notes/Journal/`date +"%Y"`-dev.md'
 
 # tmux aliases
 

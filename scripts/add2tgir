@@ -4,26 +4,86 @@
 
 today=`date +"%Y-%m-%d %H:%M"`
 url=${1}
+[ ! -z "${2}" ] && ht="${2}"
+dow=$(date +"%u")
+
+#if [ "${dow}" -eq 2 ] || [ "${dow}" -eq 3 ] || [ "${dow}" -eq 4 ];
+if [ "${dow}" -eq 4 ];
+then
+    post="$(date -d "next friday + 1 week" +'%Y-%m-%d')-tgir.md"
+    fri=$(date -d "next friday + 1 week" +'%Y-%m-%d')
+else
+    post="$(date -d "next friday" +'%Y-%m-%d')-tgir.md"
+    fri=$(date -d "next friday" +'%Y-%m-%d')
+fi
+
 #url="https://www.imdb.com/title/tt0183790/?ref_=fn_al_tt_1"
 
 title=$(wget -qO- "${url}" | perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si')
+
+[ -z "${title}" ] && title="A new post added `date +'%Y-%m-%d-%H-%M'`"
+
 slug=$(echo -n "${title}" | sed -e 's/[^[:alnum:]]/-/g' | tr -s '-' | tr A-Z a-z)
 echo "Adding ${title}..."
 #echo "${slug}"
 
-cd ~/notes/BlogPosts/tgir
+cd "${HOME}/notes/BlogPosts/tgir"
 
+if [ ! -f "${post}" ]
+then
 # Put header on top
-cat > "${slug}.md"<< EOF
+cat > "${post}"<< EOF
 ---
-Title: ${title}
+Title: "This Geek in Review for ${fri}"
 Author: goz
-Date: ${today}
+Date: ${fri}T09:45:00-04:00
 Category:
+Slug: this-geek-review-${fri}
 Tags:
-- Asides
+- geek
+- tgir
+- rss
+Summary: ""
+featured_image: ""
+images: [ "" ]
 ---
 
-[${title}](${url})
-EOF
+## Internet Travels
 
+### Geek
+
+
+### Retro
+
+
+### Videogames
+
+
+### Technology
+
+
+### Science
+
+
+### Pop Culture
+
+
+### Pot Pourri
+
+
+--
+
+EOF
+fi
+
+if [ ! -z ${ht} ]
+then
+    httitle=" h/t - "
+    newtitle=$(wget -qO- "${ht}" | perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si')
+    [ -z "${newtitle}" ] && newtitle="${ht}"
+    httitle+="[${newtitle}](${ht})"
+else
+    httitle=""
+fi
+
+echo "* [${title}](${url})${httitle}" >> ${post}

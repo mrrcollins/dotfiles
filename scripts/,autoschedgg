@@ -35,7 +35,7 @@ cp "${filename}" "${postsdir}/${outfilename}"
 
 # Add new schedule date and time
 sed -i "s/^Date: .*$/date: ${schedule}/" "${postsdir}/${outfilename}"
-
+echo "Scheduled for ${schedule}..."
 # Remove Status
 sed -i "/^Status: .*$/d" "${postsdir}/${outfilename}"
 
