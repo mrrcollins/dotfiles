@@ -26,15 +26,15 @@ alias today='t lsp'
 alias alltoday="t lsp;grep @today ~/notes/Lists/*.taskpaper |grep -v @done | sed 's/\/home\/goz\/notes\/Lists\///'"
 alias dl='vim ~/notes/Lists/gozdaily.taskpaper'
 alias dtl='vim -O ~/notes/Lists/gozdaily.taskpaper ~/notes/Lists/goztoday.taskpaper'
-alias tips="vim -c "Toc" ~/notes/Notes/tips.markdown"
-alias ideas="vim -c "Toc" ~/notes/Notes/ideas.markdown"
+alias tips="vim -c "Toc" ~/notes/Notes/tips.md"
+alias ideas="vim -c "Toc" ~/notes/Notes/ideas.md"
 alias gn="cd ~/notes"
 alias menu='~/notes/gozprod.sh'
 
 # Journal Aliases
 alias gj="gozjournal"
 #alias j='echo -e "\n" >> ~/notes/Journal/`date +"%Y"`.markdown;vim + +startinsert ~/notes/Journal/`date +"%Y"`.markdown'
-alias j='vim + +startinsert ~/notes/Journal/`date +"%Y"`.markdown'
+alias j='vim + +startinsert ~/notes/Journal/`date +"%Y"`.md'
 #alias jt="tac ~/notes/Journal/`date +%Y`.markdown |awk '!flag; /^\#/{flag=1};' | tac"
 alias tj='vim -O + ~/notes/Journal/`date +"%Y"`.markdown ~/notes/Lists/todo.txt'
 
