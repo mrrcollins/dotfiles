@@ -3,7 +3,7 @@
 fullfile=${1}
 filename=$(basename -- "${fullfile}")
 ext="${filename##*.}"
-name="${filename%.*}"
+name=$(echo "${filename%.*}" | tr '[:upper:]' '[:lower:]' | sed -e 's/ /-/g' -e 's/[^a-z0-9-]//g' -e 's/--*/-/g' -e 's/^-//' -e 's/-$//')
 y=$(date +"%Y")
 
 if [ $# -eq 0 ]; then
