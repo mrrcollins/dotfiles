@@ -35,12 +35,20 @@ if [ ! -f "${post}" ]
 then
 # Put header on top
 cat > "${post}"<< EOF
+---
 Title: "Of bits and bytes for ${pd}"
 Date: "${dayofpost} 12:10:00"
+---
 
 ## Internet Travels
 
 _Of bits and bytes is my weekly round up of interesting links and ideas I discovered on the internet. It is published on Mondays for the previous week_
+
+---
+
+[Learn21](https://learn21.org/) is a proud sponsor of Eduk8me and the Of Bits and Bytes newsletter. Read more about their mission at [Learn21](https://learn21.org/).
+
+---
 
 ### Apps
 
@@ -57,7 +65,7 @@ _Of bits and bytes is my weekly round up of interesting links and ideas I discov
 ### Pop Culture
 
 
-### Pot Pourri
+### Potpourri
 
 
 ### Extra Credit
@@ -67,10 +75,13 @@ __Here are extra links that I found interesting that may or may not be education
 
 ---
 
+By design, the vast majority of **Of Bits and Bytes** readers never pay anything for the links, commentary, and tips it provides. But you made it all the way to the end of this week’s edition — maybe not for the first time. Want to support more journalism like what you read today? If so, [click here](https://eduk8me.substack.com/subscribe).
+
 ![Ryan Signature](https://eduk8.me/wp-content/uploads/2020/06/SignatureRyan.png)
 
 Be sure to subscribe to my [YouTube channel](https://go.eduk8.me/youtube) and join your fellow educators on the [Eduk8me email list](https://eduk8.me/welcome)!
---
+
+---
 
 EOF
 fi

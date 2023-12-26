@@ -1,3 +1,11 @@
 #!/bin/bash
 
-python3 -m http.server
+python3 -m http.server 8000 &
+
+ngrok http --domain=gorgeous-complete-spaniel.ngrok-free.app 8000
+
+#MYPORT=8000; 
+#kill -9 `ps -ef |grep http.server |awk '{print $2}'`
+pkill -9 -f 'python3 -m http.server 8000' 2> /dev/null
+
+
