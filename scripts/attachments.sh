@@ -15,8 +15,9 @@ d=$(date +"%Y-%m-%d")
 file="${1}"
 y=$(date +"%Y")
 #url="https://f000.backblazeb2.com/file/ryancollins-org/attachments/${y}"
-url["rc"]="https://f000.backblazeb2.com/file/ryancollins-org/attachments/${y}"
-url["e"]="https://f000.backblazeb2.com/file/cdn-collinsoft/eduk8.me/${y}"
+#url["rc"]="https://f000.backblazeb2.com/file/ryancollins-org/attachments/${y}"
+url["rc"]="https://cdn.collinsoft.com/file/cdn-collinsoft/ryancollins-org/${y}"
+url["e"]="https://cdn.collinsoft.com/file/cdn-collinsoft/eduk8.me/${y}"
 
 #echo "URL "${url["${dest}"]}
 
@@ -32,7 +33,8 @@ ${convert} "${file}" -resize 150x150 "${out}/${slug}-150x.${ext}"
 ${convert} "${file}" -resize 1024x768 "${out}/${slug}-1024x.${ext}"
 ${convert} "${file}" -resize 2048x1536 "${out}/${slug}-2048x.${ext}"
 
-remote["rc"]="rcorg:ryancollins-org/attachments/${y}/${name}"
+#remote["rc"]="rcorg:ryancollins-org/attachments/${y}/${name}"
+remote["rc"]="b2gg:cdn-collinsoft/ryancollins-org/${y}/${name}"
 remote["e"]="b2gg:cdn-collinsoft/eduk8.me/${y}/${name}"
 
 #echo "Remote "${remote["${dest}"]}
