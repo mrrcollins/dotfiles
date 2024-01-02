@@ -36,8 +36,9 @@ DEFAULTFOLDER="."
 EXT="md"
 #PREPEND="`date +%Y-%m-%d`-"
 PREPEND=""
+
 SLUG=$(echo -n "${TITLE}" | sed -e 's/[^[:alnum:]]/-/g' | tr -s '-' | tr A-Z a-z)
-if [[ "${TITLE:0:1}" == "2" ]]; then TITLE=${TITLE:11}; fi
+#if [[ "${TITLE:0:1}" == "2" ]]; then TITLE=${TITLE:11}; fi
 
 if [[ ! -f ${DEFAULTFOLDER}/${PREPEND}${SLUG}.${EXT} ]]; then
 echo -e "---

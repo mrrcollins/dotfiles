@@ -24,14 +24,20 @@ if [ $# -eq 0 ]; then
     exit
 fi
 
-TITLE="$@"
+TITLE="${1}"
+postdate="${2}"
 AUTHOR="`whoami`"
 DATE=`date +"%Y-%m-%d %T"`
 EDITOR="vim + +startinsert"
 DEFAULTFOLDER="."
 EXT="md"
 #PREPEND="`date +%Y-%m-%d`-"
-PREPEND=""
+if [ -z "${postdate}" ]; then
+    PREPEND=""
+else
+    PREPEND="${postdate}-"
+fi
+
 SLUG=$(echo -n "${TITLE}" | sed -e 's/[^[:alnum:]]/-/g' | tr -s '-' | tr A-Z a-z)
 if [[ "${TITLE:0:1}" == "2" ]]; then TITLE=${TITLE:11}; fi
 
