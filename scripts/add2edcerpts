@@ -86,14 +86,14 @@ Be sure to subscribe to my [YouTube channel](https://go.eduk8.me/youtube) and jo
 EOF
 fi
 
-if [ ! -z ${ht} ]
+if [ ! -z "${ht}" ] && [ "${ht:0:4}" = "http" ]
 then
     httitle=" h/t - "
     newtitle=$(wget -qO- "${ht}" | perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si')
     [ -z "${newtitle}" ] && newtitle="${ht}"
     httitle+="[${newtitle}](${ht})"
 else
-    httitle=""
+    httitle="${ht}"
 fi
 
 echo "* [${title}](${surl})${httitle}" >> ${post}
