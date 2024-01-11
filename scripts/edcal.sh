@@ -7,6 +7,8 @@ then
     exit
 fi
 
+cal -A 2
+
 if [ $(date +"%u") == "1" ]; then
     first=$(date +"%Y-%m-%d")
 else
@@ -16,7 +18,7 @@ fi
 temp="##############"
 
 echo "|--   MON    --|--   TUE    --|--   WED    --|--   THR    --|--   FRI    --|--   SAT    --|--   SUN    --|"
-for day in {0..29..7}
+for day in {0..69..7}
 do
     dateline=""
     artline=""

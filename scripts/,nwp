@@ -3,6 +3,7 @@
 ## New Drafts
 ## Modified from GozNote
 ## Quickly create notes from the commandline or something like Alfred
+## v.05 - 2023-12-25 - Create drafts for Learn21
 ## v.04 - 2021-03-09 - I'm removing the prepending of the date. I'll add
 ##          it manually with an Espanso expansion if I want it. The file
 ##          extension is changed to `md`.
@@ -25,35 +26,24 @@ if [ $# -eq 0 ]; then
 fi
 
 TITLE="${1}"
-postdate="${2}"
-AUTHOR="`whoami`"
-DATE=`date +"%Y-%m-%d %T"`
+if [ ! -z "${2}" ]; then
+    DUEDATE="${2} "$(date +"%T")
+else
+    DUEDATE=`date +"%Y-%m-%d %T"`
+fi
 EDITOR="vim + +startinsert"
 DEFAULTFOLDER="."
 EXT="md"
 #PREPEND="`date +%Y-%m-%d`-"
-if [ -z "${postdate}" ]; then
-    PREPEND=""
-else
-    PREPEND="${postdate}-"
-fi
+PREPEND=""
 
 SLUG=$(echo -n "${TITLE}" | sed -e 's/[^[:alnum:]]/-/g' | tr -s '-' | tr A-Z a-z)
-if [[ "${TITLE:0:1}" == "2" ]]; then TITLE=${TITLE:11}; fi
+#if [[ "${TITLE:0:1}" == "2" ]]; then TITLE=${TITLE:11}; fi
 
 if [[ ! -f ${DEFAULTFOLDER}/${PREPEND}${SLUG}.${EXT} ]]; then
 echo -e "---
 Title: \"${TITLE}\"
-Author: ${AUTHOR}
-Date: \"${DATE}\"
-Slug: ${SLUG}
-Category: 
-Tags:
-- rss
-Status: draft
-Summary: \"\"
-featured_image: \"\"
-images: [ \"\" ]
+Date: \"${DUEDATE}\"
 ---
 
 " > "${DEFAULTFOLDER}/${PREPEND}${SLUG}.${EXT}"

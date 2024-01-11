@@ -253,12 +253,12 @@ post() {
     wp @r post create --format=status --post_content="${MSG}" --post_title="${MSG}" --post_category=355
 }
 
-je() {
+,je() {
     ENTRY=$1
-    echo -e "\n`date  +\"%Y/%m/%d %R\"` - ${1}" >> ~/notes/Journal/`date +"%Y"`.markdown
+    echo -e "\n`date  +\"%Y/%m/%d %R\"` - ${1}" >> ~/notes/Journal/`date +"%Y"`.md
 }
 
-uz() {
+,uz() {
     file="${1%.zip}"
 
     mkdir ${file}
@@ -266,6 +266,13 @@ uz() {
     unzip ../${1}
     
 }
+
+,findnote() {
+    searchfor=$(echo "${*}" | sed 's/[]\/$*.^|#[]/\\&/g')
+    echo "Searching all notes for ${searchfor}..."
+    grep -riH --include "*.md" "${searchfor}" "${HOME}/notes"
+}
+
 # set PATH so it includes the scripts folder  if it exists
 if [ -d "$HOME/.config/dotfiles/scripts" ] ; then
         PATH="$HOME/.config/dotfiles/scripts:$PATH"
