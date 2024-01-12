@@ -67,6 +67,10 @@ else
 fi
 
 echo "Clone Espanso"
+if [[ "$ostype" =~ "Darwin" ]]; then
+    ./macosEspanso.sh
+fi
+
 if [ ! -d ~/.config/espanso ]; then
    git clone --quiet git@github.com:mrrcollins/espanso.git ~/.config/espanso
 else
