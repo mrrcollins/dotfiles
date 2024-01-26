@@ -1,11 +1,16 @@
 #!/bin/bash
 
-python3 -m http.server 8000 &
+pkill -9 -f 'python3 -m http.server 8000' 2> /dev/null
+python3 -m http.server 8000 >> /tmp/pythonserve.log 2>&1 &
 
-ngrok http --domain=gorgeous-complete-spaniel.ngrok-free.app 8000
+echo "Site is now available at:"
+if [ -f "/snap/bin/ngrok" ]; then
+    ngrok http --domain=gorgeous-complete-spaniel.ngrok-free.app 8000 >> /tmp/ngrok.log 2>&1 &
+    echo "https://gorgeous-complete-spaniel.ngrok-free.app/"
+fi
 
+echo "http://venkman.racknerd.collinsoft.com:8000/"
 #MYPORT=8000; 
 #kill -9 `ps -ef |grep http.server |awk '{print $2}'`
-pkill -9 -f 'python3 -m http.server 8000' 2> /dev/null
 
 

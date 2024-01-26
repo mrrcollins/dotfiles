@@ -1,0 +1,2 @@
+pkill -9 -f 'python3 -m http.server 8000'
+pkill -9 -f 'ngrok http --domain=gorgeous-complete-spaniel.ngrok-free.app 8000'
