@@ -1,6 +1,6 @@
 #!/bin/bash
 
-apps="vim git tmux mosh socat curl rsync"
+apps="vim git tmux mosh socat curl rsync neofetch"
 
 ostype=$(uname -a)
 uname -a | grep -q Android
@@ -69,13 +69,13 @@ fi
 echo "Clone Espanso"
 if [[ "$ostype" =~ "Darwin" ]]; then
     ./macosEspanso.sh
+    if [ ! -d ~/.config/espanso ]; then
+        git clone --quiet git@github.com:mrrcollins/espanso.git ~/.config/espanso
+    else
+        echo "~/.config/espanso already exists..."
+    fi
 fi
 
-if [ ! -d ~/.config/espanso ]; then
-   git clone --quiet git@github.com:mrrcollins/espanso.git ~/.config/espanso
-else
-   echo "~/.config/espanso already exists..."
-fi
 
 
 cd ~
