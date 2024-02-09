@@ -12,7 +12,7 @@ cd "${HOME}/.config"
 for i in ${!repos[@]};
 do
     repo="${repos[$i]}"
-    if [ -d "${repo}" ] && [ ! -f "${repo}/nosync" ]; then
+    if [ -d "${repo}/.git" ] && [ ! -f "${repo}/nosync" ]; then
         echo -n "Working on ${repo}... "
         cd "${repo}"
         git add --all
