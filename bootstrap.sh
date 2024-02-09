@@ -1,6 +1,6 @@
 #!/bin/bash
 
-apps="vim git tmux mosh socat curl rsync"
+apps="vim git tmux mosh socat curl rsync neofetch unzip"
 
 ostype=$(uname -a)
 uname -a | grep -q Android
@@ -18,6 +18,10 @@ elif [[ "$ostype" =~ "Darwin" ]]; then
     brew update
     brew upgrade
 	brew install $apps
+    echo "Install Fantasque Sans Mono"
+    brew tap homebrew/cask-fonts #You only need to do this once for cask-fonts
+    brew install --cask font-fantasque-sans-mono
+
     echo "Clone alfredprefs"
     if [ ! -d ~/.config/alfredprefs ]; then
        git clone --quiet git@github.com:mrrcollins/alfredprefs.git ~/.config/alfredprefs
@@ -69,11 +73,15 @@ else
 fi
 
 echo "Clone Espanso"
-if [ ! -d ~/.config/espanso ]; then
-   git clone --quiet git@github.com:mrrcollins/espanso.git ~/.config/espanso
-else
-   echo "~/.config/espanso already exists..."
+if [[ "$ostype" =~ "Darwin" ]]; then
+    ./macosEspanso.sh
+    if [ ! -d ~/.config/espanso ]; then
+        git clone --quiet git@github.com:mrrcollins/espanso.git ~/.config/espanso
+    else
+        echo "~/.config/espanso already exists..."
+    fi
 fi
+
 
 
 cd ~

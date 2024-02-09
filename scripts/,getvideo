@@ -1,6 +1,7 @@
 #!/bin/bash
 
 cd ${HOME}/Movies
+sudo /usr/local/bin/yt-dlp -U
 #filename=$(/usr/local/bin/yt-dlp --cookies ${HOME}/cookies.SocialMedia.txt --user-agent facebookexternalhit/1.1 --windows-filenames --get-filename "${1}")
 filename=$(/usr/local/bin/yt-dlp --user-agent facebookexternalhit/1.1 --windows-filenames --get-filename "${1}")
 #filename="@StarTrekGuy  [7304431911953255722].mp4"
