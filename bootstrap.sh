@@ -57,6 +57,12 @@ fi
 echo "Set up dotfiles..."
 . setupdotfiles.sh
 
+echo "Install Nix? "
+read installnix
+if [ "$installnix" == "y" ]; then
+    . nixbootstrap.sh
+fi
+
 echo "Set up Vim..."
 if [ ! -d ~/.vim ]; then
     git clone --quiet https://github.com/mrrcollins/vim.git ~/.vim
