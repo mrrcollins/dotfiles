@@ -303,7 +303,7 @@ export NVM_DIR="$HOME/.nvm"
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
 if [ -f ${HOME}/.local/bin/zoxide ]; then
-    eval "$(zoxide init --cmd cd bash)"
+    eval "$(zoxide init bash)"
 fi
 
 
