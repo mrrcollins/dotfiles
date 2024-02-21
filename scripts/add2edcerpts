@@ -4,7 +4,7 @@ url="${1}"
 [ ! -z "${2}" ] && ht="${2}"
 #unshorten=$(curl -sLI ${url} | grep -i Location | cut -d " " -f 2)
 #echo ${unshorten}
-surl=$(~/.virtualenvs/yourls/bin/yourls shorten -s ${url} | cut -d " " -f2)
+#surl=$(~/.virtualenvs/yourls/bin/yourls shorten -s ${url} | cut -d " " -f2)
 surl="${url}"
 dow=$(date +"%u")
 
