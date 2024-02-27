@@ -15,7 +15,7 @@ tmux move-window -t 10
 tmux new-window -n dallas "ssh dallas"
 tmux move-window -t 11
 
-tmux new-window -n dallas "ssh sanjose"
+tmux new-window -n sanjose "ssh sanjose"
 tmux move-window -t 12
 
 tmux new-window
