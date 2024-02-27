@@ -43,6 +43,8 @@ alias dj='vim + +startinsert ~/notes/Journal/`date +"%Y"`-dev.md'
 # tmux aliases
 
 alias tma="tmux new -ADs"
+alias tls="tmux ls"
+
 #brantley aliases
 alias b='brantley'
 alias ba='brantley add'
