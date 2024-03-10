@@ -6,6 +6,9 @@ fn=$(basename "${filename}")
 postsdir="${HOME}/Web/gozgeek.com/content/posts/$(date +"%Y")"
 archive="${HOME}/notes/Archive/$(date +"%Y")"
 
+[ ! -d "${postsdir}" ] && mkdir "${postsdir}"
+[ ! -d "${archive}" ] && mkdir "${archive}"
+
 day=$(date +"%Y-%m-%d")
 h=$(date +"%H")
 m=$(date +"%M")

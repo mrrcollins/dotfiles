@@ -9,7 +9,7 @@ file=${1}
 y=$(date +"%Y")
 dest="${HOME}/notes/Archive/${y}"
 
-mkdir -p "${dest}"
+[ ! -d "${dest}" ] && mkdir -p "${dest}"
 
 git mv "${file}" "${dest}/"
 
