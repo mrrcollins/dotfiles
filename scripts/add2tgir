@@ -7,6 +7,8 @@ url=${1}
 [ ! -z "${2}" ] && ht="${2}"
 dow=$(date +"%u")
 
+[[ ${url:0:1} == "[" ]] && mdlink="${url}"
+
 #if [ "${dow}" -eq 2 ] || [ "${dow}" -eq 3 ] || [ "${dow}" -eq 4 ];
 if [ "${dow}" -eq 4 ];
 then
@@ -19,11 +21,16 @@ fi
 
 #url="https://www.imdb.com/title/tt0183790/?ref_=fn_al_tt_1"
 
+if [ -z "${mdlink}" ]; then
 title=$(wget -qO- "${url}" | perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si')
 
 [ -z "${title}" ] && title="A new post added `date +'%Y-%m-%d-%H-%M'`"
 
 slug=$(echo -n "${title}" | sed -e 's/[^[:alnum:]]/-/g' | tr -s '-' | tr A-Z a-z)
+else
+    title=$(echo "${mdlink}" | grep -oP '\[.*?\]' | sed 's/\[//g;s/\]//g')
+fi 
+
 echo "Adding ${title}..."
 #echo "${slug}"
 
@@ -76,14 +83,18 @@ images: [ "" ]
 EOF
 fi
 
-if [ ! -z ${ht} ]
-then
-    httitle=" h/t - "
-    newtitle=$(wget -qO- "${ht}" | perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si')
-    [ -z "${newtitle}" ] && newtitle="${ht}"
-    httitle+="[${newtitle}](${ht})"
-else
-    httitle=""
-fi
+if [ -z "${mdlink}" ]; then
+    if [ ! -z ${ht} ]
+    then
+        httitle=" h/t - "
+        newtitle=$(wget -qO- "${ht}" | perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si')
+        [ -z "${newtitle}" ] && newtitle="${ht}"
+        httitle+="[${newtitle}](${ht})"
+    else
+        httitle=""
+    fi
 
-echo "* [${title}](${url})${httitle}" >> ${post}
+    echo "* [${title}](${url})${httitle}" >> ${post}
+else
+    echo "* ${mdlink}" >> "${post}"
+fi
