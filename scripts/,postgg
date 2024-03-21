@@ -3,11 +3,13 @@
 filename="${1}"
 fn=$(basename "${filename}")
 
+[ -z "${filename}" ] && { echo "Hey! I need a file to post..."; exit; }
+
 postsdir="${HOME}/Web/gozgeek.com/content/posts/$(date +"%Y")"
 archive="${HOME}/notes/Archive/$(date +"%Y")"
 
-[ ! -d "${postsdir}" ] && mkdir "${postsdir}"
-[ ! -d "${archive}" ] && mkdir "${archive}"
+[ ! -d "${postsdir}" ] && mkdir -p "${postsdir}"
+[ ! -d "${archive}" ] && mkdir -p "${archive}"
 
 day=$(date +"%Y-%m-%d")
 h=$(date +"%H")
