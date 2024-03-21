@@ -1,0 +1,25 @@
+#!/bin/bash
+
+ostype=$(uname -a)
+cdir="${HOME}/.config"
+
+repos=("${cdir}/espanso" "${cdir}/iterm2prefs" "${cdir}/alfredprefs"\
+    "${cdir}/dotfiles" "${HOME}/.ssh" "${HOME}/.vim" "${cdir}/kitty"\
+    "/mnt/c/Users/gozar/AppData/Roaming/espanso")
+
+cd "${HOME}/.config"
+
+for i in ${!repos[@]};
+do
+    repo="${repos[$i]}"
+    if [ -d "${repo}/.git" ] && [ ! -f "${repo}/nosync" ]; then
+        echo -n "Working on ${repo}... "
+        cd "${repo}"
+        git pull --quiet
+        if [[ "${repo}" =~ vim ]]; then
+            for i in ~/.vim/bundle/*; do git -C $i pull --quiet ; done
+        fi
+        echo "Done with ${repo}!"
+    fi
+done
+
