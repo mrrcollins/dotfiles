@@ -57,10 +57,20 @@ fi
 echo "Set up dotfiles..."
 . setupdotfiles.sh
 
-echo "Install Nix? "
-read installnix
-if [ "$installnix" == "y" ]; then
+read -p "Install Nix? " i
+if [ "$i" == "y" ]; then
     . nixbootstrap.sh
+fi
+
+read -p "Install fzf? " i
+if [ "$i" == "y" ]; then
+    git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+    ~/.fzf/install
+fi
+
+read -p "Install zoxide? " i
+if [ "$i" == "y" ]; then
+    curl -sS https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | bash
 fi
 
 echo "Set up Vim..."
