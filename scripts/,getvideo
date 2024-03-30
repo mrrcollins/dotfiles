@@ -1,7 +1,8 @@
 #!/bin/bash
 
 cd ${HOME}/Movies
-sudo /usr/local/bin/yt-dlp -U
+#sudo /usr/local/bin/yt-dlp -U
+sudo /usr/local/bin/yt-dlp --update-to nightly
 #filename=$(/usr/local/bin/yt-dlp --cookies ${HOME}/cookies.SocialMedia.txt --user-agent facebookexternalhit/1.1 --windows-filenames --get-filename "${1}")
 
 if [[ "${1}" =~ "tiktok.com" ]]; then
@@ -22,10 +23,10 @@ echo "${name} - ${videoid} - ${ext} - ${file}"
 
 #/usr/local/bin/yt-dlp --cookies ${HOME}/cookies.SocialMedia.txt --user-agent facebookexternalhit/1.1 --windows-filenames -o "${file}" "${1}"
 
+#--extractor-args "tiktok:api_hostname=api22-normal-c-useast2a.tiktokv.com" \
 if [[ "${1}" =~ "tiktok.com" ]]; then
     /usr/local/bin/yt-dlp --user-agent facebookexternalhit/1.1 \
         --windows-filenames -o "${file}" \
-        --extractor-args "tiktok:api_hostname=api22-normal-c-useast2a.tiktokv.com" \
         "${1}"
 else
     /usr/local/bin/yt-dlp --user-agent facebookexternalhit/1.1 --windows-filenames -o "${file}" "${1}"
