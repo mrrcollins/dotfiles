@@ -1,6 +1,8 @@
 #!/bin/bash
 #
 
+attach="/home/goz/.config/dotfiles/scripts/attachments.sh"
+
 while getopts s:b: flag
 do
     case "${flag}" in
@@ -12,7 +14,7 @@ done
 
 [ -z "${screenshot}" ] && { echo "I need a file to work with!"; exit; }
 
-[ -z "${background}" ] && background="2024-03-30-e-tiled-background.png"
+[ -z "${background}" ] || [ ! -f "${background}" ] && background="/tmp/2024-03-30-e-tiled-background.png"
 
 tmpshot="/tmp/tmpshot.png"
 workback="/tmp/back.png"
@@ -25,7 +27,7 @@ shotheight=$(identify -format "%h" "${screenshot}")
 backwidth=$((${shotwidth} + 100))
 backheight=$((${shotheight} + 100))
 
-echo "Working with ${screenshot} (${shotwidth}x${shotheight}) on ${background}"
+#echo "Working with ${screenshot} (${shotwidth}x${shotheight}) on ${background}"
 
 #create a tiled background the size we need
 convert "${background}" -gravity center -crop ${backwidth}x${backheight}+0+0 +repage "${workback}"
@@ -57,4 +59,15 @@ convert -size ${backwidth}x${backheight} xc:transparent "PNG32:${tback}"
     composite -gravity center "${tmpshot}" "${output}" "${output}"
 
 rm "${tback}" "${workback}" "${tmpshot}"
-mv "${output}" $(date +"%Y-%m-%d")"-${screenshot%.*}.png"
+sendfile="/tmp/"$(date +"%Y-%m-%d")"-${screenshot%.*}.png"
+mv "${output}" "${sendfile}"
+#echo "${sendfile}"
+/usr/local/bin/telegram-send --disable-web-page-preview --silent -i "${sendfile}"
+
+# Create attachment too
+dest=$(${attach} "${sendfile}" e)
+
+/usr/local/bin/telegram-send --disable-web-page-preview --silent "${dest}"
+/usr/local/bin/telegram-send --disable-web-page-preview --silent "![${screenshot%.*}](${dest})"
+
+

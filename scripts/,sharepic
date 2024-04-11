@@ -1,0 +1,114 @@
+#!/bin/bash
+
+declare -A category
+declare -A post_format
+declare -A author
+
+tmppic="/tmp/sharepic.png"
+font="${HOME}/Documents/Verdana.ttf"
+font="${HOME}/Documents/ShantellSans-SemiBold.ttf"
+captiongraphic="/tmp/caption.png"
+out="/tmp/captionout.png"
+
+debug=1
+comment() {
+    [ ! -z ${debug} ] && echo "${1}"
+}
+
+
+# Asides category for site
+category["r"]=""
+category["e"]=""
+
+# Post_format for status
+post_format["r"]=""
+post_format["e"]=""
+
+# Author
+author["r"]="1"
+author["e"]="1"
+
+while getopts c:s:p:l: flag
+do
+    case "${flag}" in
+        c) caption=${OPTARG};;
+        s) site=${OPTARG};;
+        p) pic=${OPTARG};;
+        l) loc=${OPTARG};;
+    esac
+done
+
+if [ -z ${site} ] || [ -z "${pic}" ]; then
+    echo "Usage: ,sharepic -s [r|e] -c 'Caption to add' -p '/path/to/pic'"
+    exit
+fi
+
+comment "Resize the ${pic} to be 1080 width (${tmppic})"
+convert "${pic}" -resize 1080x1920 "${tmppic}"
+tmpwidth=$(identify -format "%w" "${tmppic}")
+tmpheight=$(identify -format "%h" "${tmppic}")
+
+comment "Set caption width and height"
+cw=680
+ch=250
+cwminus1=$((${cw}-1))
+chminus1=$((${ch}-1))
+cwminus10=$((${cw}-10))
+chminus10=$((${ch}-10))
+
+comment "Working on ${tmppic} (${tmpwidth}x${tmpheight})"
+
+comment "If there is a caption, add it to the image"
+if [ ! -z "${caption}" ]; then
+#    caption=$(echo "${caption}" | fmt -w 30)
+#    comment "Wrap caption:
+#${caption}"
+
+#    comment "Get pointsize for text"
+#    pointsize=$(convert -gravity center \
+#        -background black \
+#        -fill white \
+#        -size ${cw}x${ch} \
+#        -font "${font}" caption:"$caption" -format "%[caption:pointsize]" info:)
+
+    comment "Create a white box with rounded corners"
+    convert -size ${cw}x${ch} xc:none \
+        -fill white \
+        -draw "roundrectangle 0,0,${cwminus1},${chminus1},20,20" \
+        /tmp/captionbox.png
+
+    comment "Create caption graphic with ${font}"
+    convert -background none \
+        -gravity Center \
+        -fill black \
+        -size ${cwminus10}x${chminus10} \
+        -font "${font}" \
+        caption:"${caption}" \
+        /tmp/captiontext.png
+
+    comment "Composite both graphics, creating ${captiongraphic}"
+    composite -gravity center \
+        /tmp/captiontext.png \
+        /tmp/captionbox.png \
+        "${captiongraphic}"
+
+    comment "Add caption to original graphic, creating ${out}"
+    composite -geometry +200+125 \
+        "${captiongraphic}" \
+        "${tmppic}" \
+        "${out}"
+fi
+
+telegram-send --caption="${caption}" -i "${out}"
+#-postid=$(echo "${msg}" | wp @${site} post create - \
+#-    --porcelain --post_category=${category["${site}"]} \
+#-    --post_title="${msg:0:20}..." \
+#-    --post_author="${author["${site}"]}" \
+#-    --post_status="publish" \
+#-    --post_excerpt="${msg}" \
+#-    --tags_input="${tags}")
+#-
+#-# Set post_format to status
+#-postformat=${post_format["${site}"]}
+#-wp @${site} db query "insert into wp_term_relationships (object_id,term_taxonomy_id) VALUES (\"${postid}\",\"${postformat}\")"
+#-

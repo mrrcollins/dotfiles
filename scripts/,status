@@ -1,0 +1,44 @@
+#!/bin/bash
+
+declare -A category
+declare -A post_format
+declare -A author
+
+# Asides category for site
+category["r"]="355"
+category["e"]="2103"
+
+# Post_format for status
+post_format["r"]="357"
+post_format["e"]="1190"
+
+# Author
+author["r"]="1"
+author["e"]="1"
+
+while getopts m:s:t: flag
+do
+    case "${flag}" in
+        m) msg=${OPTARG};;
+        s) site=${OPTARG};;
+        t) tags=${OPTARG};;
+    esac
+done
+
+if [ -z ${site} ] || [ -z "${msg}" ]; then
+    echo "Usage: ,status -m 'Status Update' -s [r|e] -t [tag1,tag2]"
+    exit
+fi
+
+postid=$(echo "${msg}" | wp @${site} post create - \
+    --porcelain --post_category=${category["${site}"]} \
+    --post_title="${msg:0:20}..." \
+    --post_author="${author["${site}"]}" \
+    --post_status="publish" \
+    --post_excerpt="${msg}" \
+    --tags_input="${tags}")
+
+# Set post_format to status
+postformat=${post_format["${site}"]}
+wp @${site} db query "insert into wp_term_relationships (object_id,term_taxonomy_id) VALUES (\"${postid}\",\"${postformat}\")"
+

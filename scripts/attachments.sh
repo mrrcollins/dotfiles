@@ -20,6 +20,7 @@ y=$(date +"%Y")
 url["rc"]="https://dl.ryancollins.org/${y}"
 #url["e"]="https://cdn.collinsoft.com/file/cdn-collinsoft/eduk8.me/${y}"
 url["e"]="https://files.eduk8.me/${y}"
+url["gg"]="https://cdn.gozgeek.com/${y}"
 
 #echo "URL "${url["${dest}"]}
 
@@ -38,6 +39,7 @@ ${convert} "${file}" -resize 2048x1536 "${out}/${slug}-2048x.${ext}"
 #remote["rc"]="rcorg:ryancollins-org/attachments/${y}/${name}"
 remote["rc"]="b2gg:cdn-collinsoft/ryancollins-org/${y}"
 remote["e"]="b2gg:cdn-collinsoft/eduk8.me/${y}"
+remote["gg"]="b2gg:cdn-collinsoft/gozgeek.com/${y}"
 
 #echo "Remote "${remote["${dest}"]}
 
