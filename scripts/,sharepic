@@ -17,12 +17,12 @@ comment() {
 }
 
 
-# Asides category for site
-category["r"]=""
-category["e"]=""
+# Picture category for site
+category["r"]="361"
+category["e"]="2074"
 
-# Post_format for status
-post_format["r"]=""
+# Post_format for picture
+post_format["r"]="359"
 post_format["e"]=""
 
 # Author
@@ -123,16 +123,24 @@ imgid=$(wp @${site} media import "/tmp/${filename}" \
 imgurl=$(wp @${site} db query "SELECT guid FROM wp_posts  WHERE ID=\"${imgid}\"" | head -n 2 | tail -1)
 comment "Image uploaded with ID of ${imgid} (${imgurl})"
 
+post="
+<img src=\"${imgurl}\">
+"
 
-#-postid=$(echo "${msg}" | wp @${site} post create - \
-#-    --porcelain --post_category=${category["${site}"]} \
-#-    --post_title="${msg:0:20}..." \
-#-    --post_author="${author["${site}"]}" \
-#-    --post_status="publish" \
-#-    --post_excerpt="${msg}" \
-#-    --tags_input="${tags}")
-#-
-#-# Set post_format to status
-#-postformat=${post_format["${site}"]}
-#-wp @${site} db query "insert into wp_term_relationships (object_id,term_taxonomy_id) VALUES (\"${postid}\",\"${postformat}\")"
-#-
+comment "Create post..."
+postid=$(echo "${post}" | wp @${site} post create - \
+    --porcelain --post_category=${category["${site}"]} \
+    --post_title="${caption}" \
+    --post_author="${author["${site}"]}" \
+    --post_status="draft" \
+    --post_excerpt="${caption}" \
+    --tags_input="${tags}")
+
+postformat=${post_format["${site}"]}
+if [ -z "${postformat}"]; then
+    comment "Set post_format to Image"
+    wp @${site} db query "insert into wp_term_relationships (object_id,term_taxonomy_id) VALUES (\"${postid}\",\"${postformat}\")"
+fi
+
+comment "Set featured image"
+wp @${site} post meta update ${postid} _thumbnail_id ${imgid}
