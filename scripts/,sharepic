@@ -114,14 +114,15 @@ fi
 telegram-send --caption="${caption}" -i "${out}"
 
 comment "Upload image to WP..."
-#-host=$(grep -A 1 @${site} ${HOME}/.wp-cli/config.yml | grep ssh | cut -d " " -f 6)
-#-scp "${tmppic}" "${host}:/tmp/${filename}"
-#-imgid=$(wp @${site} media import "/tmp/${filename}" \
-#-    --porcelain \
-#-    --title="${caption}"
-#-)
-#-imgurl=$(wp @${site} db query "SELECT guid FROM wp_posts  WHERE ID=\"${imgid}\"" | head -n 2 | tail -1)
-#-comment "Image uploaded with ID of ${imgid} (${imgurl})"
+host=$(grep -A 1 @${site} ${HOME}/.wp-cli/config.yml | grep ssh | cut -d " " -f 6)
+scp "${tmppic}" "${host}:/tmp/${filename}"
+imgid=$(wp @${site} media import "/tmp/${filename}" \
+    --porcelain \
+    --title="${caption}"
+)
+imgurl=$(wp @${site} db query "SELECT guid FROM wp_posts  WHERE ID=\"${imgid}\"" | head -n 2 | tail -1)
+comment "Image uploaded with ID of ${imgid} (${imgurl})"
+
 
 #-postid=$(echo "${msg}" | wp @${site} post create - \
 #-    --porcelain --post_category=${category["${site}"]} \
