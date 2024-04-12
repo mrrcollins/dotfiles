@@ -113,7 +113,7 @@ fi
 
 telegram-send --caption="${caption}" -i "${out}"
 
-#-comment "Upload image to WP..."
+comment "Upload image to WP..."
 #-host=$(grep -A 1 @${site} ${HOME}/.wp-cli/config.yml | grep ssh | cut -d " " -f 6)
 #-scp "${tmppic}" "${host}:/tmp/${filename}"
 #-imgid=$(wp @${site} media import "/tmp/${filename}" \
