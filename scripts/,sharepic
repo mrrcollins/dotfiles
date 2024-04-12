@@ -9,6 +9,7 @@ font="${HOME}/Documents/Verdana.ttf"
 font="${HOME}/Documents/ShantellSans-SemiBold.ttf"
 captiongraphic="/tmp/caption.png"
 out="/tmp/captionout.png"
+wd="/tmp"
 
 debug=1
 comment() {
@@ -42,6 +43,17 @@ if [ -z ${site} ] || [ -z "${pic}" ]; then
     echo "Usage: ,sharepic -s [r|e] -c 'Caption to add' -p '/path/to/pic'"
     exit
 fi
+
+comment "Setting up the filename and extension"
+ext="${pic##*.}"
+md5=$(md5sum "${pic}" | awk '{print $1}' | head -c 5)
+if [ -z "${caption}" ]; then
+    filename=$(date +"%Y-%m-%d-%H-%M")"-${md5}.${ext}"
+else
+    filename=$(echo "${caption}" | tr '[:upper:]' '[:lower:]' | sed -e 's/ /-/g' -e 's/[^a-z0-9-]//g' -e 's/--*/-/g' -e 's/^-//' -e 's/-$//' | head -c 16)"-${md5}.${ext}"
+fi
+
+comment "Filename is ${filename}"
 
 comment "Resize the ${pic} to be 1080 width (${tmppic})"
 convert "${pic}" -resize 1080x1920 "${tmppic}"
@@ -100,6 +112,17 @@ if [ ! -z "${caption}" ]; then
 fi
 
 telegram-send --caption="${caption}" -i "${out}"
+
+#-comment "Upload image to WP..."
+#-host=$(grep -A 1 @${site} ${HOME}/.wp-cli/config.yml | grep ssh | cut -d " " -f 6)
+#-scp "${tmppic}" "${host}:/tmp/${filename}"
+#-imgid=$(wp @${site} media import "/tmp/${filename}" \
+#-    --porcelain \
+#-    --title="${caption}"
+#-)
+#-imgurl=$(wp @${site} db query "SELECT guid FROM wp_posts  WHERE ID=\"${imgid}\"" | head -n 2 | tail -1)
+#-comment "Image uploaded with ID of ${imgid} (${imgurl})"
+
 #-postid=$(echo "${msg}" | wp @${site} post create - \
 #-    --porcelain --post_category=${category["${site}"]} \
 #-    --post_title="${msg:0:20}..." \
