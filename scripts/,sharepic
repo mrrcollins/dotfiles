@@ -9,6 +9,7 @@ font="${HOME}/Documents/Verdana.ttf"
 font="${HOME}/Documents/ShantellSans-SemiBold.ttf"
 captiongraphic="/tmp/caption.png"
 out="/tmp/captionout.png"
+outmovie="tmp/out.mp4"
 wd="/tmp"
 
 debug=0
@@ -115,7 +116,13 @@ if [ ! -z "${caption}" ]; then
         "${out}"
 fi
 
-[ ! ${debug} ] && telegram-send --caption="${caption}" -i "${out}"
+comment "Create movie for TikTok"
+/usr/bin/ffmpeg -framerate 30 -i "${out}" -t 8 -c:v libx264 -pix_fmt yuv420p -vf "scale=1080:-1,loop=-1:1" -movflags faststart "${outmovie}"
+
+if [ ! ${debug} ]; then 
+    telegram-send --caption="${caption}" -i "${out}"
+    telegram-send --video "${outmovie}" --caption "${caption}"
+fi
 
 comment "Upload image to WP..."
 host=$(grep -A 1 @${site} ${HOME}/.wp-cli/config.yml | grep ssh | cut -d " " -f 6)
