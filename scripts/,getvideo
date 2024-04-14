@@ -26,7 +26,7 @@ echo "${name} - ${videoid} - ${ext} - ${file}"
 #--extractor-args "tiktok:api_hostname=api22-normal-c-useast2a.tiktokv.com" \
 if [[ "${1}" =~ "tiktok.com" ]]; then
     /usr/local/bin/yt-dlp --user-agent facebookexternalhit/1.1 \
-        --windows-filenames -o "${file}" \
+        -f 0 --windows-filenames -o "${file}" \
         "${1}"
 else
     /usr/local/bin/yt-dlp --user-agent facebookexternalhit/1.1 --windows-filenames -o "${file}" "${1}"

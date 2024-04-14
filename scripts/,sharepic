@@ -11,9 +11,13 @@ captiongraphic="/tmp/caption.png"
 out="/tmp/captionout.png"
 wd="/tmp"
 
-debug=1
+debug=0
+
+post_status="publish"
+[ ${debug} ] && post_status="draft"
+
 comment() {
-    [ ! -z ${debug} ] && echo "${1}"
+    [ ${debug} ] && echo "${1}"
 }
 
 
@@ -105,13 +109,13 @@ if [ ! -z "${caption}" ]; then
         "${captiongraphic}"
 
     comment "Add caption to original graphic, creating ${out}"
-    composite -geometry +200+125 \
+    composite -geometry +200+135 \
         "${captiongraphic}" \
         "${tmppic}" \
         "${out}"
 fi
 
-telegram-send --caption="${caption}" -i "${out}"
+[ ! ${debug} ] && telegram-send --caption="${caption}" -i "${out}"
 
 comment "Upload image to WP..."
 host=$(grep -A 1 @${site} ${HOME}/.wp-cli/config.yml | grep ssh | cut -d " " -f 6)
@@ -132,15 +136,18 @@ postid=$(echo "${post}" | wp @${site} post create - \
     --porcelain --post_category=${category["${site}"]} \
     --post_title="${caption}" \
     --post_author="${author["${site}"]}" \
-    --post_status="draft" \
+    --post_status="${post_status}" \
     --post_excerpt="${caption}" \
     --tags_input="${tags}")
 
 postformat=${post_format["${site}"]}
-if [ -z "${postformat}"]; then
+if [ ! -z "${postformat}" ]; then
     comment "Set post_format to Image"
     wp @${site} db query "insert into wp_term_relationships (object_id,term_taxonomy_id) VALUES (\"${postid}\",\"${postformat}\")"
 fi
 
 comment "Set featured image"
 wp @${site} post meta update ${postid} _thumbnail_id ${imgid}
+
+comment "Set picture's (${imgid}) post_parent to new post (${postid})"
+wp @${site} db query "update wp_posts set post_parent=\"${postid}\" where ID=\"${imgid}\""
