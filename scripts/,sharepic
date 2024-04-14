@@ -117,7 +117,7 @@ if [ ! -z "${caption}" ]; then
 fi
 
 comment "Create movie for TikTok"
-/usr/bin/ffmpeg -framerate 30 -i "${out}" -t 8 -c:v libx264 -pix_fmt yuv420p -vf "scale=1080:-1,loop=-1:1" -movflags faststart "${outmovie}"
+/usr/bin/ffmpeg -hide_banner -loglevel error -framerate 30 -i "${out}" -t 8 -c:v libx264 -pix_fmt yuv420p -vf "scale=1080:-1,loop=-1:1" -movflags faststart "${outmovie}"
 
 if [ ! ${debug} ]; then 
     telegram-send --caption="${caption}" -i "${out}"
