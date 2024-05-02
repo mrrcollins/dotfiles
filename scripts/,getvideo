@@ -33,3 +33,4 @@ else
 fi
 
 telegram-send --video "${file}" --caption "${filename}"
+videoupload -t "${filename:0:50}" -c "${filename}" "${file}"
