@@ -73,6 +73,13 @@ if [ "$i" == "y" ]; then
     curl -sS https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | bash
 fi
 
+read -p "Install kitty? " i
+if [ "$i" == "y" ]; then
+    sudo apt install kitty
+    cd "${HOME}/.config"
+    git clone https://d54cf7d38c9e36e80ca8af4447dfab13ccf66e57@git.collinsoft.com/goz/kitty.git
+fi
+
 echo "Set up Vim..."
 if [ ! -d ~/.vim ]; then
     git clone --quiet https://github.com/mrrcollins/vim.git ~/.vim

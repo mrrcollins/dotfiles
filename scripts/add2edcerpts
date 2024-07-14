@@ -43,13 +43,15 @@ then
 # Put header on top
 cat > "${post}"<< EOF
 ---
-Title: "Of bits and bytes for ${pd}"
+Title: "🙋‍♂️ Summer Links Only Special - Of bits and bytes for ${pd}"
 Date: "${dayofpost} 12:10:00"
 ---
 
 ## Internet Travels
 
 _Of bits and bytes is my weekly round up of interesting links and ideas I discovered on the internet. It is published on Mondays for the previous week_
+
+With it being summer and me not wanting to get burned out, for June and July the Of Bits and Bytes newsletter will be links only. Hopefully that won’t be too boring for you, but I also want you to get a chance to recharge. The full newsletter will return in August!
 
 ---
 
