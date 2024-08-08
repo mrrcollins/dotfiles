@@ -62,8 +62,8 @@ else
         curl --silent -OL https://dtinth.github.io/comic-mono-font/ComicMono.ttf
         curl --silent -OL https://github.com/belluzj/fantasque-sans/releases/latest/download/FantasqueSansMono-Normal.tar.gz
         tar zxvf FantasqueSansMono-Normal.tar.gz -C FantasqueSansMono-Normal
-        sudo cp ComicMono.ttf "FantasqueSansMono-Normal/TTF/*.ttf" /usr/share/fonts/
-        sudo fc-cache -f -v
+        sudo cp ComicMono.ttf FantasqueSansMono-Normal/TTF/*.ttf /usr/share/fonts/
+        fc-cache -f -v
         cd -
     fi
 fi
