@@ -68,7 +68,7 @@ else
     fi
 fi
 
-read "What is your Git API key?" git_key
+read -p "What is your Git API key?" git_key
 
 echo "Set up dotfiles..."
 . setupdotfiles.sh
@@ -110,7 +110,7 @@ if [[ "$ostype" =~ "Darwin" ]]; then
     ./macosEspanso.sh
 fi
 
-if [[ "${ostype}" =~ "Linux"]]; then
+if [[ "${ostype}" =~ "Linux" ]]; then
     read -p "Install espanso? " i
     if [ "${i}" == "y" ]; then
         if [ ! -d ~/.config/espanso ]; then
