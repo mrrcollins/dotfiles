@@ -62,13 +62,13 @@ else
         curl --silent -OL https://dtinth.github.io/comic-mono-font/ComicMono.ttf
         curl --silent -OL https://github.com/belluzj/fantasque-sans/releases/latest/download/FantasqueSansMono-Normal.tar.gz
         tar zxvf FantasqueSansMono-Normal.tar.gz -C FantasqueSansMono-Normal
-        sudo cp ComicMono.ttf "FantasqueSansMono-Normal/TTF/*.ttf" /usr/share/fonts/
-        sudo fc-cache -f -v
+        sudo cp ComicMono.ttf FantasqueSansMono-Normal/TTF/*.ttf /usr/share/fonts/
+        fc-cache -f -v
         cd -
     fi
 fi
 
-read "What is your Git API key?" git_key
+read -p "What is your Git API key?" git_key
 
 echo "Set up dotfiles..."
 . setupdotfiles.sh
@@ -110,7 +110,7 @@ if [[ "$ostype" =~ "Darwin" ]]; then
     ./macosEspanso.sh
 fi
 
-if [[ "${ostype}" =~ "Linux"]]; then
+if [[ "${ostype}" =~ "Linux" ]]; then
     read -p "Install espanso? " i
     if [ "${i}" == "y" ]; then
         if [ ! -d ~/.config/espanso ]; then
