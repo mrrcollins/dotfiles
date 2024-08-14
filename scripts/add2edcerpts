@@ -43,7 +43,7 @@ then
 # Put header on top
 cat > "${post}"<< EOF
 ---
-Title: "🙋‍♂️ Summer Links Only Special - Of bits and bytes for ${pd}"
+Title: "🙋‍♂️ S- Of bits and bytes for ${pd}"
 Date: "${dayofpost} 12:10:00"
 ---
 
@@ -51,7 +51,6 @@ Date: "${dayofpost} 12:10:00"
 
 _Of bits and bytes is my weekly round up of interesting links and ideas I discovered on the internet. It is published on Mondays for the previous week_
 
-With it being summer and me not wanting to get burned out, for June and July the Of Bits and Bytes newsletter will be links only. Hopefully that won’t be too boring for you, but I also want you to get a chance to recharge. The full newsletter will return in August!
 
 ---
 
@@ -59,34 +58,41 @@ With it being summer and me not wanting to get burned out, for June and July the
 
 ---
 
-### Apps
+## Apps
 
 
-### Pedagogy
+## Pedagogy
 
 
-### Technology
+## Technology
 
 
-### Tips
+## Tips
 
 
-### Pop Culture
+## Pop Culture
 
 
-### Potpourri
+## Potpourri
 
 
-### Extra Credit
+## Extra Credit
 
 __Here are extra links that I found interesting that may or may not be education related or interesting to you and I didn't want to lose them.__
 
 
+## Thank you!
+
+**Major props if you’ve made it this far**, you are a rockstar! Feel free to [contact me](https://goz2.me/@eduk8me) with questions, ideas, concerns, or your thoughts on the next Marvel movie. In fact, I love to discuss about any topic and then wonder how it intersects with education, so fire away!
+
+*“Yesterday is history, Tomorrow is a mystery, but Today is a gift. That is why it is called the present.”* - Oogway, *Kung Fu Panda*
+
+
+![Ryan Signature](https://eduk8.me/wp-content/uploads/2020/06/SignatureRyan.png)
+
 ---
 
 By design, the vast majority of **Of Bits and Bytes** readers never pay anything for the links, commentary, and tips it provides. But you made it all the way to the end of this week’s edition — maybe not for the first time. Want to support more journalism like what you read today? If so, [click here](https://eduk8me.substack.com/subscribe).
-
-![Ryan Signature](https://eduk8.me/wp-content/uploads/2020/06/SignatureRyan.png)
 
 Be sure to subscribe to my [YouTube channel](https://go.eduk8.me/youtube) and join your fellow educators on the [Eduk8me email list](https://eduk8.me/welcome)!
 
@@ -108,5 +114,9 @@ if [ -z "${mdlink}" ]; then
 
     echo "* [${title}](${surl})${httitle}" >> ${post}
 else
-    echo "* ${mdlink}" >> "${post}"
+    if [ ! -z "${ht}" ]; then 
+        echo "* ${mdlink} ([Archive](${ht}))" >> "${post}"
+    else
+        echo "* ${mdlink}" >> "${post}"
+    fi
 fi
