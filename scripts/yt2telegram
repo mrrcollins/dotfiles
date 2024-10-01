@@ -4,8 +4,10 @@
 # Requires youtube-dl and 
 # [telegram-notify](https://github.com/NicolasBernaerts/debian-scripts/tree/master/telegram)
 
+PATH=$PATH:/home/sysadmin/.local/bin
+
 # Update youtube-dl
-sudo yt-dlp -U
+sudo /home/sysadmin/.local/bin/yt-dlp -U
 
 yturl="${1}"
 
