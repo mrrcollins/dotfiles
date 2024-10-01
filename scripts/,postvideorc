@@ -1,0 +1,87 @@
+#!/bin/bash
+
+declare -A category
+declare -A post_format
+declare -A author
+
+wd="/tmp/postvideorc"
+
+# Set `debug=""` when not debugging, `debug=1` when debugging
+debug=""
+
+post_status="publish"
+[ ${debug} ] && post_status="draft"
+
+comment() {
+    [ ${debug} ] && echo "${1}"
+}
+
+# Site information
+category="361"
+post_format="400"
+author="1"
+
+while getopts c:v:t: flag
+do
+    case "${flag}" in
+        c) caption=${OPTARG};;
+        v) video=${OPTARG};;
+        t) title=${OPTARG};;
+    esac
+done
+
+if [ -z ${title} ] || [ -z "${video}" ]; then
+    if [ ${debug} ]; then
+        title="Droneshow Trogdor"
+        caption="Will delete later"
+        video="${wd}/more-disneydroneshow.mp4"
+    else
+        echo "Usage: ,postvideorc -t 'Title of movie' -c 'Caption to add' -v '/path/to/video'"
+        exit
+    fi
+fi
+
+if [ ${debug} ]; then
+    videotoken="eQEGI5ZOe"
+else
+    videotoken=$(videoupload -t "${title}" -c "${caption}" -u rc "${video}")
+fi
+thumbnail="${videotoken}.jpg"
+
+comment "Video token: ${videotoken}, thumbnail: ${thumbnail}"
+
+post="
+<!-- wp:html -->
+<iframe width="560" height="315" src="https://video.goz2.us/embed?m=${videotoken}" frameborder="0" allowfullscreen></iframe>
+<!-- /wp:html -->
+
+<!-- wp:paragraph -->
+<p>${caption}</p>
+<!-- /wp:paragraph -->
+"
+postid=$(echo "${post}" | wp @r post create - \
+    --porcelain --post_category="${category}" \
+    --post_title="${title}" \
+    --post_author="${author}" \
+    --post_status="${post_status}" \
+    --post_excerpt="${caption}" \
+    --tags_input="${tags}")
+
+comment "Set post_format to Video"
+wp @r db query "insert into wp_term_relationships (object_id,term_taxonomy_id) VALUES (\"${postid}\",\"${post_format}\")"
+
+comment "Upload image to WP..."
+host=$(grep -A 1 @r ${HOME}/.wp-cli/config.yml | grep ssh | cut -d " " -f 6)
+scp "${wd}/${thumbnail}" "${host}:/tmp/${thumbnail}"
+imgid=$(wp @r media import "/tmp/${thumbnail}" \
+    --porcelain \
+    --title="${title}"
+)
+imgurl=$(wp @r db query "SELECT guid FROM wp_posts  WHERE ID=\"${imgid}\"" | head -n 2 | tail -1)
+comment "Image uploaded with ID of ${imgid} (${imgurl})"
+
+comment "Set featured image"
+wp @r post meta update ${postid} _thumbnail_id ${imgid}
+
+comment "Set picture's (${imgid}) post_parent to new post (${postid})"
+wp @r db query "update wp_posts set post_parent=\"${postid}\" where ID=\"${imgid}\""

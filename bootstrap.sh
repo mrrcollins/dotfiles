@@ -49,10 +49,26 @@ elif [ ! $android ]; then
 	apt install $apps
     apt upgrade
 else
+    echo "Updating and installing ${apps}"
     sudo apt update
     sudo apt upgrade
 	sudo apt install $apps
+
+    read -p "Install fonts? " i
+    if [ "$i" == "y" ]; then
+        echo "Installing fonts..."
+        cd /tmp
+        mkdir -p FantasqueSansMono-Normal
+        curl --silent -OL https://dtinth.github.io/comic-mono-font/ComicMono.ttf
+        curl --silent -OL https://github.com/belluzj/fantasque-sans/releases/latest/download/FantasqueSansMono-Normal.tar.gz
+        tar zxvf FantasqueSansMono-Normal.tar.gz -C FantasqueSansMono-Normal
+        sudo cp ComicMono.ttf FantasqueSansMono-Normal/TTF/*.ttf /usr/share/fonts/
+        fc-cache -f -v
+        cd -
+    fi
 fi
+
+read -p "What is your Git API key?" git_key
 
 echo "Set up dotfiles..."
 . setupdotfiles.sh
@@ -77,7 +93,7 @@ read -p "Install kitty? " i
 if [ "$i" == "y" ]; then
     sudo apt install kitty
     cd "${HOME}/.config"
-    git clone https://d54cf7d38c9e36e80ca8af4447dfab13ccf66e57@git.collinsoft.com/goz/kitty.git
+    git clone https://${git_key}@git.collinsoft.com/goz/kitty.git
 fi
 
 echo "Set up Vim..."
@@ -92,14 +108,25 @@ fi
 echo "Clone Espanso"
 if [[ "$ostype" =~ "Darwin" ]]; then
     ./macosEspanso.sh
-    if [ ! -d ~/.config/espanso ]; then
-        git clone --quiet git@github.com:mrrcollins/espanso.git ~/.config/espanso
-    else
-        echo "~/.config/espanso already exists..."
-    fi
 fi
 
+if [[ "${ostype}" =~ "Linux" ]]; then
+    read -p "Install espanso? " i
+    if [ "${i}" == "y" ]; then
+        if [ ! -d ~/.config/espanso ]; then
+            git clone --quiet git@github.com:mrrcollins/espanso.git ~/.config/espanso
 
+            cd "/tmp"
+            wget https://github.com/federico-terzi/espanso/releases/latest/download/espanso-debian-${XDG_SESSION_TYPE}-amd64.deb
+            sudo apt install ./espanso-debian-${XDG_SESSION_TYPE}-amd64.deb
+            espanso service register
+            espanso start
+        else
+            echo "~/.config/espanso already exists..."
+        fi
+        
+    fi
+fi
 
 cd ~
 

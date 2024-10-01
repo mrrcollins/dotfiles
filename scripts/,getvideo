@@ -1,5 +1,7 @@
 #!/bin/bash
 
+ap=" --restrict-filenames --write-info-json --write-description "
+
 cd ${HOME}/Movies
 ytdlp=$(which yt-dlp)
 #sudo ${ytdlp} -U
@@ -28,10 +30,29 @@ echo "${name} - ${videoid} - ${ext} - ${file}"
 if [[ "${1}" =~ "tiktok.com" ]]; then
     ${ytdlp} -S res,ext:mp4:m4a --recode mp4 --user-agent facebookexternalhit/1.1 \
         --windows-filenames -o "${file}" \
+        ${ap} \
         "${1}"
 else
+<<<<<<< HEAD
     ${ytdlp} -S res,ext:mp4:m4a --recode mp4 --user-agent facebookexternalhit/1.1 --windows-filenames -o "${file}" "${1}"
+=======
+    /usr/local/bin/yt-dlp --user-agent facebookexternalhit/1.1 --windows-filenames ${ap} -o "${file}" "${1}"
+>>>>>>> a7b47bb55d2567f184c8979a2676ecb0b156043d
 fi
+uploaded=$(jq -r .uploader "${file%.*}.info.json")
+description=$(jq -r .description "${file%.*}.info.json")
+url=$(jq -r '.formats[1].http_headers.Referer' "${file%.*}.info.json")
 
+<<<<<<< HEAD
 telegram-send --video "${file}" --caption "${filename}"
 #videoupload -t "${filename:0:50}" -c "${filename}" "${file}"
+=======
+caption="${description}
+ 
+ @${uploaded}
+ ${url}
+ ${filename}"
+
+telegram-send --video "${file}" --caption "${caption}"
+videoupload -t "${filename:0:50}" -c "${caption}" "${file}"
+>>>>>>> a7b47bb55d2567f184c8979a2676ecb0b156043d
