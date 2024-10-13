@@ -1,10 +1,15 @@
 #!/bin/bash
 
-apps="vim git tmux mosh socat curl rsync neofetch unzip"
 
 ostype=$(uname -a)
 uname -a | grep -q Android
 android=$?
+
+if [[ "$ostype" =~ "Ubuntu" ]]; then
+	apps="vim-nox git tmux mosh socat curl rsync neofetch unzip"
+else
+	apps="vim git tmux mosh socat curl rsync neofetch unzip"
+fi
 
 if [[ "$ostype" =~ "Alpine" ]]; then
     sudo apk update
@@ -68,7 +73,11 @@ else
     fi
 fi
 
-read -p "What is your Git API key?" git_key
+if [ -f ${HOME}/.gitea ]; then
+	git_key=$(cat ${HOME}/.gitea)
+else
+	read -p "What is your Git API key?" git_key
+fi
 
 echo "Set up dotfiles..."
 . setupdotfiles.sh
