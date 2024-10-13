@@ -103,6 +103,7 @@ if [ "$i" == "y" ]; then
     sudo apt install kitty
     cd "${HOME}/.config"
     git clone https://${git_key}@git.collinsoft.com/goz/kitty.git
+    cp "${HOME}/.config/kitty/venkman.desktop" "${HOME}/.local/share/applications"
 fi
 
 echo "Set up Vim..."
