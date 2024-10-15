@@ -73,8 +73,8 @@ else
     fi
 fi
 
-if [ -f ${HOME}/.gitea ]; then
-	git_key=$(cat ${HOME}/.gitea)
+if [ -f ${HOME}/.ssh/gitea.key ]; then
+	git_key=$(cat ${HOME}/.ssh/gitea.key)
 else
 	read -p "What is your Git API key?" git_key
 fi
