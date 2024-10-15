@@ -103,6 +103,7 @@ if [ "$i" == "y" ]; then
     sudo apt install kitty
     cd "${HOME}/.config"
     git clone https://${git_key}@git.collinsoft.com/goz/kitty.git
+    mkdir "${HOME}/.local/share/applications"
     cp "${HOME}/.config/kitty/venkman.desktop" "${HOME}/.local/share/applications"
 fi
 
