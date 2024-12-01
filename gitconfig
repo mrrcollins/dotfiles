@@ -3,3 +3,5 @@
 [user]
 	name = Ryan 'Goz' Collins
 	email = goz@gozgeek.com
+[pull]
+	rebase = false
