@@ -1,6 +1,7 @@
 #/bin/bash
 
 mkdir -p "${HOME}/opt"
+support="${HOME}/notes/Dev/obsidian"
 
 echo "Getting Obsidian AppImage..."
 curl -L "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.6.7/Obsidian-1.6.7.AppImage" -o "${HOME}/opt/Obsidian.AppImage"
@@ -20,6 +21,6 @@ fi
 
 
 echo "Adding menu item..."
-cp "${HOME}/notes/startobsidian.sh" "${HOME}/.local/bin/"
-cp "${HOME}/notes/obsidian.desktop" "${HOME}/.local/share/applications"
+cp "${support}/startobsidian.sh" "${HOME}/.local/bin/"
+cp "${support}/obsidian.desktop" "${HOME}/.local/share/applications"
 
