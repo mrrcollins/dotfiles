@@ -5,7 +5,7 @@ ap=" --restrict-filenames --write-info-json --write-description "
 cd ${HOME}/Movies
 ytdlp=$(which yt-dlp)
 #sudo ${ytdlp} -U
-sudo ${ytdlp} --update-to nightly
+${ytdlp} --update-to nightly
 #filename=$(${ytdlp} --cookies ${HOME}/cookies.SocialMedia.txt --user-agent facebookexternalhit/1.1 --windows-filenames --get-filename "${1}")
 
 if [[ "${1}" =~ "tiktok.com" ]]; then
