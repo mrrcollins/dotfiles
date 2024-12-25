@@ -26,3 +26,6 @@ do
     fi
 done
 
+echo "Upgrade fzf..."
+cd ~/.fzf && git pull && ./install
+
