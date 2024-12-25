@@ -106,7 +106,7 @@ fi
 read -p "Install fzf? " i
 if [ "$i" == "y" ]; then
     git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-    ~/.fzf/install
+    ~/.fzf/install --all
 fi
 
 read -p "Install zoxide? " i
