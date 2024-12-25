@@ -27,5 +27,5 @@ do
 done
 
 echo "Upgrade fzf..."
-cd ~/.fzf && git pull && ./install
+cd ~/.fzf && git pull && ./install --all
 
