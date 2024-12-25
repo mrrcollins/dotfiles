@@ -1,6 +1,8 @@
-#/bin/bash
+#!/bin/bash
 
 mkdir -p "${HOME}/opt"
+mkdir -p "${HOME}/.local/bin"
+mkdir -p "${HOME}/.local/share/applications"
 support="${HOME}/notes/Dev/obsidian"
 
 echo "Getting Obsidian AppImage..."

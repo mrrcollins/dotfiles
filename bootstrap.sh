@@ -6,9 +6,9 @@ uname -a | grep -q Android
 android=$?
 
 if [[ "$ostype" =~ "Ubuntu" ]]; then
-	apps="vim-nox git tmux mosh socat curl rsync neofetch unzip"
+	apps="vim-nox git tmux mosh socat curl rsync neofetch unzip dialog"
 else
-	apps="vim git tmux mosh socat curl rsync neofetch unzip"
+	apps="vim git tmux mosh socat curl rsync neofetch unzip dialog"
 fi
 
 if [[ "$ostype" =~ "Alpine" ]]; then
@@ -73,11 +73,27 @@ else
     fi
 fi
 
+# git stuff
 if [ -f ${HOME}/.ssh/gitea.key ]; then
 	git_key=$(cat ${HOME}/.ssh/gitea.key)
 else
 	read -p "What is your Git API key?" git_key
 fi
+
+## Set merge globally
+git config --global pull.rebase false
+
+## Set git name and email
+defgitname=$(hostname)
+defgitemail="$(hostname)@collinsoft.com"
+
+read -p "Name for git (${defgitname}): " gitname
+read -p "Email for git (${defgitemail}): " gitemail
+gitname="${gitname:-$defgitname}"
+gitemail="${gitemail:-$defgitemail}"
+
+git config --global user.name "${gitname}"
+git config --global user.email "${gitemail}"
 
 echo "Set up dotfiles..."
 . setupdotfiles.sh
@@ -103,13 +119,13 @@ if [ "$i" == "y" ]; then
     sudo apt install kitty
     cd "${HOME}/.config"
     git clone https://${git_key}@git.collinsoft.com/goz/kitty.git
-    mkdir "${HOME}/.local/share/applications"
+    mkdir -p  "${HOME}/.local/share/applications"
     cp "${HOME}/.config/kitty/venkman.desktop" "${HOME}/.local/share/applications"
 fi
 
 echo "Set up Vim..."
 if [ ! -d ~/.vim ]; then
-    git clone --quiet https://github.com/mrrcollins/vim.git ~/.vim
+    git clone --quiet git@github.com:mrrcollins/vim.git ~/.vim
     cd ~/.vim
     . bootstrap.sh
 else
