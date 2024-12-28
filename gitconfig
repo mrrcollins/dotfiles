@@ -1,7 +1,7 @@
 [init]
 	defaultBranch = main
 [user]
-	name = Ryan 'Goz' Collins
-	email = goz@gozgeek.com
+	name = pop-os
+	email = pop-os@collinsoft.com
 [pull]
 	rebase = false
