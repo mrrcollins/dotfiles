@@ -6,9 +6,9 @@ uname -a | grep -q Android
 android=$?
 
 if [[ "$ostype" =~ "Ubuntu" ]]; then
-	apps="vim-nox git tmux mosh socat curl rsync neofetch unzip dialog"
+	apps="vim-nox git tmux mosh socat curl rsync unzip dialog"
 else
-	apps="vim git tmux mosh socat curl rsync neofetch unzip dialog"
+	apps="vim git tmux mosh socat curl rsync unzip dialog"
 fi
 
 if [[ "$ostype" =~ "Alpine" ]]; then
@@ -58,6 +58,16 @@ else
     sudo apt update
     sudo apt upgrade
 	sudo apt install $apps
+
+    read -p "Install fastfetch? " i
+    if [ "$i" == "y" ]; then
+        echo "Installing fastfetch..."
+        mkdir -p "${HOME}/Downloads"
+        cd "${HOME}/Downloads"
+        curl -OL https://github.com/fastfetch-cli/fastfetch/releases/latest/download/fastfetch-linux-amd64.deb
+        sudo apt install ./fastfetch-linux-amd64.deb
+        cd -
+    fi
 
     read -p "Install fonts? " i
     if [ "$i" == "y" ]; then
