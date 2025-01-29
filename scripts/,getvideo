@@ -39,7 +39,7 @@ uploaded=$(jq -r .uploader "${file%.*}.info.json")
 description=$(jq -r .description "${file%.*}.info.json")
 url=$(jq -r '.formats[1].http_headers.Referer' "${file%.*}.info.json")
 
-caption="${description}
+caption="${description:0:100}
  
  @${uploaded}
  ${url}
