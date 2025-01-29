@@ -116,7 +116,7 @@ fi
 
 read -p "Install kitty? " i
 if [ "$i" == "y" ]; then
-    sudo apt install kitty
+    #sudo apt install kitty
     cd "${HOME}/.config"
     git clone https://${git_key}@git.collinsoft.com/goz/kitty.git
     mkdir -p  "${HOME}/.local/share/applications"
