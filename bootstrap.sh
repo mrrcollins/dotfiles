@@ -6,9 +6,9 @@ uname -a | grep -q Android
 android=$?
 
 if [[ "$ostype" =~ "Ubuntu" ]]; then
-	apps="vim-nox git tmux mosh socat curl rsync unzip dialog"
+	apps="vim-nox git tmux mosh socat curl rsync unzip dialog htop"
 else
-	apps="vim git tmux mosh socat curl rsync unzip dialog"
+	apps="vim git tmux mosh socat curl rsync unzip dialog htop"
 fi
 
 if [[ "$ostype" =~ "Alpine" ]]; then
@@ -57,7 +57,7 @@ else
     echo "Updating and installing ${apps}"
     sudo apt update
     sudo apt upgrade
-	sudo apt install $apps
+	sudo apt install $apps -y
 
     read -p "Install fastfetch? " i
     if [ "$i" == "y" ]; then
@@ -130,7 +130,8 @@ if [ "$i" == "y" ]; then
     cd "${HOME}/.config"
     git clone https://${git_key}@git.collinsoft.com/goz/kitty.git
     mkdir -p  "${HOME}/.local/share/applications"
-    cp "${HOME}/.config/kitty/venkman.desktop" "${HOME}/.local/share/applications"
+    cd ${HOME}/.config/kitty
+    bash install-kitty.sh
 fi
 
 echo "Set up Vim..."
