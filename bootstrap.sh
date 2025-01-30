@@ -6,9 +6,9 @@ uname -a | grep -q Android
 android=$?
 
 if [[ "$ostype" =~ "Ubuntu" ]]; then
-	apps="vim-nox git tmux mosh socat curl rsync unzip dialog htop"
+	apps="vim-nox git tmux mosh socat curl rsync unzip dialog htop autossh"
 else
-	apps="vim git tmux mosh socat curl rsync unzip dialog htop"
+	apps="vim git tmux mosh socat curl rsync unzip dialog htop autossh"
 fi
 
 if [[ "$ostype" =~ "Alpine" ]]; then
