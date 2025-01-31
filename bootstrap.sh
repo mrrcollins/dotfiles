@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 ostype=$(uname -a)
 uname -a | grep -q Android
 android=$?
@@ -20,12 +19,13 @@ elif [[ "$ostype" =~ "Android" ]]; then
     apt upgrade
 	apt install $apps
 elif [[ "$ostype" =~ "Darwin" ]]; then
-    brew update
-    brew upgrade
-	brew install $apps
+    brew='sudo -Hu brewuser brew'
+    ${brew} update
+    ${brew} upgrade
+	${brew} install $apps
     echo "Install Fantasque Sans Mono"
-    brew tap homebrew/cask-fonts #You only need to do this once for cask-fonts
-    brew install --cask font-fantasque-sans-mono
+    ${brew} tap home${brew}/cask-fonts #You only need to do this once for cask-fonts
+    ${brew} install --cask font-fantasque-sans-mono
 
     echo "Clone alfredprefs"
     if [ ! -d ~/.config/alfredprefs ]; then
