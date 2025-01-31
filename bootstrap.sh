@@ -106,7 +106,9 @@ git config --global user.name "${gitname}"
 git config --global user.email "${gitemail}"
 
 echo "Set up dotfiles..."
+cd setup
 . setupdotfiles.sh
+..
 
 read -p "Install Nix? " i
 if [ "$i" == "y" ]; then
