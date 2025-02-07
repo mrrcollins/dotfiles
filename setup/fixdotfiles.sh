@@ -17,15 +17,9 @@ do
     DFILE="${HOME}/.${i}"
     echo "Working on $i (destination ${DFILE})..."
 
-    if [ ! -L "${DFILE}" ]; then
-        echo "Symlink ${DFILE} doesn't exist"
-        if [ -f "${DFILE}" ]; then 
-            BACKUP=${DFILE}.$(date +"%Y%m%d%H%M%S")
-            echo "${DFILE} file exists, backing it up to ${BACKUP}"
-            mv ${DFILE} ${BACKUP}
-        fi
-        
-        echo "Creating symlink for ${i}"
+    if [ ! -e "${DFILE}" ]; then
+        echo "Symlink ${DFILE} is broken, fixing..."
+        rm "${DFILE}"
         ln -s "${cwd}/${i}" "${DFILE}"
     else
         echo "Skipping ${DFILE}, symlink already exists."
