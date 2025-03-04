@@ -1,7 +1,0 @@
-[init]
-	defaultBranch = main
-[user]
-	name = pop-os
-	email = pop-os@collinsoft.com
-[pull]
-	rebase = false

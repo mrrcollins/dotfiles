@@ -1,14 +1,13 @@
 #!/bin/bash
 
-
 ostype=$(uname -a)
 uname -a | grep -q Android
 android=$?
 
 if [[ "$ostype" =~ "Ubuntu" ]]; then
-	apps="vim-nox git tmux mosh socat curl rsync unzip dialog"
+	apps="vim-nox git tmux mosh socat curl rsync unzip dialog htop autossh"
 else
-	apps="vim git tmux mosh socat curl rsync unzip dialog"
+	apps="vim git tmux mosh socat curl rsync unzip dialog htop autossh"
 fi
 
 if [[ "$ostype" =~ "Alpine" ]]; then
@@ -20,12 +19,13 @@ elif [[ "$ostype" =~ "Android" ]]; then
     apt upgrade
 	apt install $apps
 elif [[ "$ostype" =~ "Darwin" ]]; then
-    brew update
-    brew upgrade
-	brew install $apps
+    brew='sudo -Hu kadmin brew'
+    ${brew} update
+    ${brew} upgrade
+	${brew} install $apps
     echo "Install Fantasque Sans Mono"
-    brew tap homebrew/cask-fonts #You only need to do this once for cask-fonts
-    brew install --cask font-fantasque-sans-mono
+    ${brew} tap home${brew}/cask-fonts #You only need to do this once for cask-fonts
+    ${brew} install --cask font-fantasque-sans-mono
 
     echo "Clone alfredprefs"
     if [ ! -d ~/.config/alfredprefs ]; then
@@ -48,7 +48,7 @@ elif [[ "$ostype" =~ "Darwin" ]]; then
     echo "Get some files..."
     cd ~/Downloads
     rsync -avp venkman:~/.config/macOS/ .
-    cd
+    cd -
 elif [ ! $android ]; then
     apt update
 	apt install $apps
@@ -57,7 +57,7 @@ else
     echo "Updating and installing ${apps}"
     sudo apt update
     sudo apt upgrade
-	sudo apt install $apps
+	sudo apt install $apps -y
 
     read -p "Install fastfetch? " i
     if [ "$i" == "y" ]; then
@@ -106,7 +106,7 @@ git config --global user.name "${gitname}"
 git config --global user.email "${gitemail}"
 
 echo "Set up dotfiles..."
-. setupdotfiles.sh
+bash setupdotfiles.sh
 
 read -p "Install Nix? " i
 if [ "$i" == "y" ]; then
@@ -126,11 +126,12 @@ fi
 
 read -p "Install kitty? " i
 if [ "$i" == "y" ]; then
-    sudo apt install kitty
+    #sudo apt install kitty
     cd "${HOME}/.config"
     git clone https://${git_key}@git.collinsoft.com/goz/kitty.git
     mkdir -p  "${HOME}/.local/share/applications"
-    cp "${HOME}/.config/kitty/venkman.desktop" "${HOME}/.local/share/applications"
+    cd ${HOME}/.config/kitty
+    bash install-kitty.sh
 fi
 
 echo "Set up Vim..."
