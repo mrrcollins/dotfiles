@@ -2,8 +2,13 @@
 
 ap=" --restrict-filenames --write-info-json --write-description "
 
-cd ${HOME}/Movies
-ytdlp=$(which yt-dlp)
+cd "${HOME}/Movies"
+echo "Sitting in `pwd` downloading ${1}"
+
+#ytdlp=$(which yt-dlp)
+ytdlp="/home/goz/.local/bin/yt-dlp"
+
+echo "${ytdlp}"
 #sudo ${ytdlp} -U
 ${ytdlp} --update-to nightly
 #filename=$(${ytdlp} --cookies ${HOME}/cookies.SocialMedia.txt --user-agent facebookexternalhit/1.1 --windows-filenames --get-filename "${1}")
