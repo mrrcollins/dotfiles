@@ -19,6 +19,12 @@ knwhosts="$sshdir"/known_hosts # Path to known_hosts file.
 sshto_script[0]=~              # Path to sshto script
 sshto_script[1]=.sshto_script  # Sshto script filename
 sshto_script[2]="${sshto_script[0]}/${sshto_script[1]}" # Sshto script full
+
+name_tmux_window() {
+    if [[ ! -z $TMUX ]];then
+        tmux rename-window "${1}"
+    fi
+}
 #------------------------{ Add some tabs }------------------------------------------------------------------------------
 tabbed(){ target=$target gnome-terminal --title=$target --tab -qe "${1/_target_/$target}"; } # Terminal command for tabs
 
@@ -188,6 +194,7 @@ check_confile(){
 
 #------------------------{ Pause function }-----------------------------------------------------------------------------
 pause(){
+    [[ $OPT =~ exit ]] && { exit; }
     local  mess=${1:-'press any key to continue'}
     printf "\n$COF$BLD$mess\n"
     read   -srn1
@@ -284,7 +291,17 @@ edit_conf(){
 }
 
 #------------------------{ SSH to target server }-----------------------------------------------------------------------
-go_to_target(){ clear; ssh $SSH_OPT $target || pause; }
+go_to_target(){ 
+    clear
+    name_tmux_window "$target"
+    ssh $SSH_OPT $target
+    if [[ $OPT =~ exit ]]; then 
+        exit
+    else
+        name_tmux_window $(hostname)
+        pause
+    fi
+}
 
 #------------------------{ Add aliases }--------------------------------------------------------------------------------
 add_aliases(){
