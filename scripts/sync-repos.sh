@@ -4,6 +4,6 @@ cwd=$(pwd)
 
 cd ${HOME}/notes
 #${HOME}/.config/dotfiles/scripts/git-sync
-./notesync.sh
+bash ./notesync.sh
 
 cd "${cwd}"
