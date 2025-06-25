@@ -9,7 +9,7 @@ mkdir -p ${HOME}/Music
 cd ${HOME}/Music
 
 # Update youtube-dl
-sudo /home/sysadmin/.local/bin/yt-dlp -U
+${HOME}/.local/bin/yt-dlp -U
 
 yturl="${1}"
 
