@@ -5,6 +5,8 @@
 # [telegram-notify](https://github.com/NicolasBernaerts/debian-scripts/tree/master/telegram)
 
 PATH=$PATH:/home/sysadmin/.local/bin
+mkdir -p ${HOME}/Music
+cd ${HOME}/Music
 
 # Update youtube-dl
 sudo /home/sysadmin/.local/bin/yt-dlp -U
@@ -16,4 +18,7 @@ songname=$(yt-dlp -o "%(title)s.%(ext)s" --get-filename "${yturl}")
 #/usr/local/bin/youtube-dl -x -o "%(title)s.%(ext)s" --audio-format mp3 "${yturl}"
 yt-dlp -x -o "%(title)s.%(ext)s" --audio-format mp3 "${yturl}"
 
-${HOME}/.config/dotfiles/scripts/telegram-notify --user "-1001471206245" --text "${songname%.*}" --document "${songname%.*}.mp3"
+#${HOME}/.config/dotfiles/scripts/telegram-notify --user "-1001471206245" --text "${songname%.*}" --document "${songname%.*}.mp3"
+/usr/local/bin/telegram-send --caption "${songname%.*}" --audio "${songname%.*}.mp3"
+
+[ $HOSTNAME == "dev" ] && rsync --progress "${songname%.*}.mp3" icloud:/Users/goz/icloud/Music/

@@ -47,3 +47,7 @@ caption="${description}
 
 telegram-send --video "${file}" --caption "${caption}"
 videoupload -t "${filename:0:50}" -c "${caption}" "${file}"
+
+[ $HOSTNAME == "dev" ] && rsync --progress "${file}" icloud:/Users/goz/icloud/Movies/iPhoneRecord/
+
+
