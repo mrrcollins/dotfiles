@@ -6,7 +6,7 @@ cd "${HOME}/Movies"
 echo "Sitting in `pwd` downloading ${1}"
 
 #ytdlp=$(which yt-dlp)
-ytdlp="/home/goz/.local/bin/yt-dlp"
+ytdlp="${HOME}/.local/bin/yt-dlp"
 
 echo "${ytdlp}"
 #sudo ${ytdlp} -U
