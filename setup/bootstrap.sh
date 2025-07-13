@@ -5,7 +5,7 @@ uname -a | grep -q Android
 android=$?
 
 if [[ "$ostype" =~ "Ubuntu" ]]; then
-	apps="vim-nox git tmux mosh socat curl rsync unzip dialog htop autossh"
+	apps="vim-nox git tmux mosh socat curl rsync unzip dialog htop autossh gawk"
 else
 	apps="vim git tmux mosh socat curl rsync unzip dialog htop autossh"
 fi
@@ -19,7 +19,7 @@ elif [[ "$ostype" =~ "Android" ]]; then
     apt upgrade
 	apt install $apps
 elif [[ "$ostype" =~ "Darwin" ]]; then
-    brew='sudo -Hu brewuser brew'
+    brew='sudo -Hu kadmin brew'
     ${brew} update
     ${brew} upgrade
 	${brew} install $apps
@@ -48,7 +48,7 @@ elif [[ "$ostype" =~ "Darwin" ]]; then
     echo "Get some files..."
     cd ~/Downloads
     rsync -avp venkman:~/.config/macOS/ .
-    cd
+    cd -
 elif [ ! $android ]; then
     apt update
 	apt install $apps
@@ -106,9 +106,7 @@ git config --global user.name "${gitname}"
 git config --global user.email "${gitemail}"
 
 echo "Set up dotfiles..."
-cd setup
-. setupdotfiles.sh
-..
+bash setupdotfiles.sh
 
 read -p "Install Nix? " i
 if [ "$i" == "y" ]; then

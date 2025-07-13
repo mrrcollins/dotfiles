@@ -1,0 +1,79 @@
+#!/usr/bin/python3
+
+import os
+import re
+from datetime import datetime, timedelta
+
+# Helper functions
+def parse_metadata(file_content):
+    date_match = re.search(r'^Date:\\s*["\']?(.+?)["\']?$', file_content, re.MULTILINE)
+    title_match = re.search(r"^Title:\s*(.+)$", file_content, re.MULTILINE)
+
+    date = datetime.strptime(date_match.group(1), "%Y-%m-%d %H:%M:%S") if date_match else None
+    title = title_match.group(1) if title_match else None
+
+    return date, title
+
+def get_previous_sunday():
+    today = datetime.today()
+    start_of_week = today - timedelta(days=today.weekday() + 1) if today.weekday() != 6 else today
+    return start_of_week
+
+def generate_calendar(events):
+    start_date = get_previous_sunday()
+    end_date = start_date + timedelta(days=6)
+    
+    days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+    calendar = {start_date + timedelta(days=i): [] for i in range(7)}
+
+    for date, link in events:
+        day = date.date()
+        if start_date.date() <= day <= end_date.date():
+            calendar[day].append(link)
+
+    markdown = "| " + " | ".join(days) + " |\n"
+    markdown += "|---" * 7 + "|\n"
+
+    for i in range(7):
+        day_date = start_date + timedelta(days=i)
+        day_number = day_date.day
+        cell_content = f"{day_number}"
+
+        for link in calendar.get(day_date.date(), []):
+            cell_content += f"\n{link}"
+
+        markdown += f"| {cell_content} "
+    
+    markdown += "|\n"
+    return markdown
+
+# Main script
+def main():
+    events = []
+
+    for filename in os.listdir("."):
+        if filename.endswith(".md"):
+            with open(filename, "r", encoding="utf-8") as f:
+                content = f.read()
+                date, title = parse_metadata(content)
+
+                if date and title:
+                    short_title = title[:10].replace("|", "\\|")
+                    link = f"[[{filename}|{short_title}]]"
+                    events.append((date, link))
+
+    # Sort events by date
+    events.sort(key=lambda x: x[0])
+
+    # Generate the Markdown table
+    calendar_markdown = generate_calendar(events)
+
+    # Write the output to a file
+    with open("EditorialCalendar.md", "w", encoding="utf-8") as f:
+        f.write(calendar_markdown)
+
+    print("Editorial calendar generated: EditorialCalendar.md")
+
+if __name__ == "__main__":
+    main()
+

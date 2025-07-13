@@ -9,7 +9,7 @@ wd="/tmp/postvideorc"
 # Set `debug=""` when not debugging, `debug=1` when debugging
 debug=""
 
-post_status="publish"
+post_status="pending"
 [ ${debug} ] && post_status="draft"
 
 comment() {
@@ -30,7 +30,7 @@ do
     esac
 done
 
-if [ -z ${title} ] || [ -z "${video}" ]; then
+if [ -z "${title}" ] || [ -z "${video}" ]; then
     if [ ${debug} ]; then
         title="Droneshow Trogdor"
         caption="Will delete later"
@@ -72,6 +72,7 @@ wp @r db query "insert into wp_term_relationships (object_id,term_taxonomy_id) V
 
 comment "Upload image to WP..."
 host=$(grep -A 1 @r ${HOME}/.wp-cli/config.yml | grep ssh | cut -d " " -f 6)
+comment "${wd}/${thumbnail} - ${host}:/tmp/${thumbnail}"
 scp "${wd}/${thumbnail}" "${host}:/tmp/${thumbnail}"
 imgid=$(wp @r media import "/tmp/${thumbnail}" \
     --porcelain \
