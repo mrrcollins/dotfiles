@@ -6,7 +6,7 @@ cd "${HOME}/Movies"
 echo "Sitting in `pwd` downloading ${1}"
 
 #ytdlp=$(which yt-dlp)
-ytdlp="/home/goz/.local/bin/yt-dlp"
+ytdlp="${HOME}/.local/bin/yt-dlp"
 
 echo "${ytdlp}"
 #sudo ${ytdlp} -U
@@ -52,3 +52,8 @@ caption="${description:0:100}
 
 telegram-send --video "${file}" --caption "${caption}"
 videoupload -t "${filename:0:50}" -c "${caption}" "${file}"
+
+[ $HOSTNAME == "dev" ] && ffmpeg -i "${file}" -vcodec libx264 -acodec aac "${name:0:40}-recompress.mp4"
+[ $HOSTNAME == "dev" ] && rsync --progress "${name:0:40}-recompress.mp4" icloud:/Users/goz/icloud/Movies/iPhoneRecord/
+
+

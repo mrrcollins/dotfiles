@@ -3,3 +3,5 @@
 	email = venkman@collinsoft.com
 [pull]
 	rebase = false
+[init]
+	defaultBranch = main
