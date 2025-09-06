@@ -1,10 +1,18 @@
 #!/bin/bash
 
+# Set to 1
+# Threads: _wpas_skip_publicize_25478617 
+# Facebook: _wpas_skip_publicize_21764758
+# Instagram: _wpas_skip_publicize_25478615
+# Bluesky: _wpas_skip_publicize_25478607
+
+
 declare -A category
 declare -A post_format
 declare -A author
 
 tmppic="/tmp/sharepic.png"
+wp_pic="/tmp/wp_pic.jpg"
 font="${HOME}/Documents/Verdana.ttf"
 font="${HOME}/Documents/ShantellSans-SemiBold.ttf"
 captiongraphic="/tmp/caption.png"
@@ -12,13 +20,13 @@ out="/tmp/captionout.png"
 outmovie="/tmp/out.mp4"
 wd="/tmp"
 
-debug=0
+#debug=1
 
 post_status="publish"
-[ ! ${debug} ] && post_status="draft"
+[ ! -z ${debug} ] && post_status="draft"
 
 comment() {
-    [ ! ${debug} ] && echo "${1}"
+    [ ! -z ${debug} ] && echo "${1}"
 }
 
 
@@ -61,7 +69,10 @@ fi
 comment "Filename is ${filename}"
 
 comment "Resize the ${pic} to be 1080 width (${tmppic})"
-convert "${pic}" -resize 1080x1920 "${tmppic}"
+convert "${pic}" -resize 1080x "${wp_pic}"
+convert "${pic}" -background black -gravity center \
+  -resize 1080x1920 -extent 1080x1920 -strip "${tmppic}"
+
 tmpwidth=$(identify -format "%w" "${tmppic}")
 tmpheight=$(identify -format "%h" "${tmppic}")
 
@@ -87,6 +98,8 @@ if [ ! -z "${caption}" ]; then
 #        -fill white \
 #        -size ${cw}x${ch} \
 #        -font "${font}" caption:"$caption" -format "%[caption:pointsize]" info:)
+    notags="${caption//#[^ ]*/}"
+    notags=$(echo "$notags" | xargs)
 
     comment "Create a white box with rounded corners"
     convert -size ${cw}x${ch} xc:none \
@@ -100,7 +113,7 @@ if [ ! -z "${caption}" ]; then
         -fill black \
         -size ${cwminus10}x${chminus10} \
         -font "${font}" \
-        caption:"${caption}" \
+        caption:"${notags}" \
         /tmp/captiontext.png
 
     comment "Composite both graphics, creating ${captiongraphic}"
@@ -116,21 +129,23 @@ if [ ! -z "${caption}" ]; then
         "${out}"
 fi
 
-if [ ${debug} ]; then 
+if [ -z ${debug} ]; then 
     telegram-send --caption="${caption}" -i "${out}"
 fi
 
 comment "Create movie for TikTok"
 rm "${outmovie}"
 #/usr/bin/ffmpeg -hide_banner -loglevel error -framerate 30 -i "${out}" -t 8 -c:v libx264 -pix_fmt yuv420p -vf "scale=1080:-1,loop=-1:1,pad=ceil(iw/2)*2:ceil(ih/2)*2" -movflags faststart "${outmovie}"
+
 /usr/bin/ffmpeg -hide_banner -loglevel error -framerate 30 -i "${out}" -t 8 -c:v libx264 -pix_fmt yuv420p -vf "scale=8000:-1,zoompan=z='zoom+0.001':x=iw/2-(iw/zoom/2):y=ih/2-(ih/zoom/2):d=8*30:s=1080x1920:fps=30,pad=ceil(iw/2)*2:ceil(ih/2)*2" -movflags faststart "${outmovie}"
 
-if [ ${debug} ]; then 
+
+if [ -z ${debug} ]; then 
     telegram-send --video "${outmovie}" --caption "${caption}"
 fi
 
 comment "Let's make it a little smaller for WP"
-convert "${tmppic}" -resize 540x540 "/tmp/${filename}"
+convert "${wp_pic}" -resize 540x540 "/tmp/${filename}"
 
 comment "Upload image to WP..."
 host=$(grep -A 1 @${site} ${HOME}/.wp-cli/config.yml | grep ssh | cut -d " " -f 6)
@@ -142,17 +157,28 @@ imgid=$(wp @${site} media import "/tmp/${filename}" \
 imgurl=$(wp @${site} db query "SELECT guid FROM wp_posts  WHERE ID=\"${imgid}\"" | head -n 2 | tail -1)
 comment "Image uploaded with ID of ${imgid} (${imgurl})"
 
-post="
-<img src=\"${imgurl}\">
+post="<!-- wp:post-featured-image /-->
+
+<!-- wp:paragraph -->
+<p>${notags}</p>
+
 "
 
+#comment "Create post..."
+#postid=$(echo "${post}" | wp @${site} post create - \
+#    --porcelain \
+#    --post_type="jetpack-social-note" \
+#    --post_status="draft" \
+#    --post_category=${category["${site}"]})
+
 comment "Create post..."
+tags=$(echo "$caption" | grep -oE '#[A-Za-z0-9_]+' | sed 's/#//g' | paste -sd, -)
 postid=$(echo "${post}" | wp @${site} post create - \
     --porcelain --post_category=${category["${site}"]} \
-    --post_title="${caption}" \
+    --post_title="${notags}" \
     --post_author="${author["${site}"]}" \
-    --post_status="${post_status}" \
-    --post_excerpt="${caption}" \
+    --post_status="draft" \
+    --post_excerpt="${notags}" \
     --tags_input="${tags}")
 
 postformat=${post_format["${site}"]}
@@ -165,4 +191,18 @@ comment "Set featured image"
 wp @${site} post meta update ${postid} _thumbnail_id ${imgid}
 
 comment "Set picture's (${imgid}) post_parent to new post (${postid})"
-wp @${site} db query "update wp_posts set post_parent=\"${postid}\" where ID=\"${imgid}\""
+#wp @${site} db query "update wp_posts set post_parent=\"${postid}\" where ID=\"${imgid}\""
+wp @${site} post update ${imgid} --post_parent=${postid}
+
+comment "Turn off sharing to FB and Threads because Instagram will do that..."
+#FB
+wp @${site} post meta set ${postid} _wpas_skip_publicize_21764758 1
+#Threads
+wp @${site} post meta set ${postid} _wpas_skip_publicize_25478617 1
+
+comment "Set link message"
+wp @${site} post meta set ${postid} _wpas_mess " "
+
+comment "Publish!"
+wp @${site} post update ${postid} --post_status=${post_status}
+
