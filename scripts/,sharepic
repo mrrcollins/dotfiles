@@ -13,12 +13,15 @@ declare -A author
 
 tmppic="/tmp/sharepic.png"
 wp_pic="/tmp/wp_pic.jpg"
+story_pic="/tmp/story_pic.jpg"
 font="${HOME}/Documents/Verdana.ttf"
 font="${HOME}/Documents/ShantellSans-SemiBold.ttf"
 captiongraphic="/tmp/caption.png"
 out="/tmp/captionout.png"
 outmovie="/tmp/out.mp4"
 wd="/tmp"
+TILT_PCT=-40
+ptype="pic"
 
 #debug=1
 
@@ -42,13 +45,15 @@ post_format["e"]=""
 author["r"]="1"
 author["e"]="1"
 
-while getopts c:s:p:l: flag
+while getopts c:s:p:l:t:k: flag
 do
     case "${flag}" in
         c) caption=${OPTARG};;
         s) site=${OPTARG};;
         p) pic=${OPTARG};;
         l) loc=${OPTARG};;
+        t) TILT_PCT=${OPTARG};;
+        k) ptype=${OPTARG};;
     esac
 done
 
@@ -87,46 +92,93 @@ chminus10=$((${ch}-10))
 comment "Working on ${tmppic} (${tmpwidth}x${tmpheight})"
 
 comment "If there is a caption, add it to the image"
-if [ ! -z "${caption}" ]; then
-#    caption=$(echo "${caption}" | fmt -w 30)
-#    comment "Wrap caption:
-#${caption}"
-
-#    comment "Get pointsize for text"
-#    pointsize=$(convert -gravity center \
-#        -background black \
-#        -fill white \
-#        -size ${cw}x${ch} \
-#        -font "${font}" caption:"$caption" -format "%[caption:pointsize]" info:)
+if [ -n "${caption:-}" ]; then
+    # Strip hashtags and tidy spacing
     notags="${caption//#[^ ]*/}"
     notags=$(echo "$notags" | xargs)
 
-    comment "Create a white box with rounded corners"
-    convert -size ${cw}x${ch} xc:none \
-        -fill white \
-        -draw "roundrectangle 0,0,${cwminus1},${chminus1},20,20" \
-        /tmp/captionbox.png
+    # Style
+    : "${font:=Arial}"
+    text_fill="black"
+    box_fill="white"
+    pad=20
+    radius=20
 
-    comment "Create caption graphic with ${font}"
+    # --- Geometry constraints ---
+    maxh=$(( tmpheight / 8 ))   # cap box height at 1/8 of image height
+    yoff=200                    # absolute Y for the TOP edge of the (rotated) canvas
+
+    # Caption width ~70% of image width (with bounds)
+    cw=$(( tmpwidth * 7 / 10 ))
+    [ $cw -lt 240 ] && cw=240
+    margin=40
+    [ $cw -gt $(( tmpwidth - margin )) ] && cw=$(( tmpwidth - margin ))
+
+    # Inner drawing height (box minus padding)
+    inner_h=$(( maxh - pad*2 ))
+    [ $inner_h -lt 40 ] && inner_h=40
+
+    comment "Render wrapped caption"
     convert -background none \
-        -gravity Center \
-        -fill black \
-        -size ${cwminus10}x${chminus10} \
-        -font "${font}" \
-        caption:"${notags}" \
-        /tmp/captiontext.png
+            -fill "$text_fill" \
+            -font "$font" \
+            -gravity Center \
+            -size ${cw}x${inner_h} \
+            caption:"${notags}" \
+            /tmp/captiontext.png
 
-    comment "Composite both graphics, creating ${captiongraphic}"
-    composite -gravity center \
-        /tmp/captiontext.png \
-        /tmp/captionbox.png \
-        "${captiongraphic}"
+    # Measure text, build rounded box
+    tw=$(identify -format "%w" /tmp/captiontext.png)
+    th=$(identify -format "%h" /tmp/captiontext.png)
+    bw=$(( tw + pad*2 ))
+    bh=$(( th + pad*2 ))
+    [ $bh -gt $maxh ] && bh=$maxh
+    bwm1=$(( bw - 1 ))
+    bhm1=$(( bh - 1 ))
 
-    comment "Add caption to original graphic, creating ${out}"
-    composite -geometry +200+135 \
-        "${captiongraphic}" \
-        "${tmppic}" \
-        "${out}"
+    comment "Create rounded box ${bw}x${bh}"
+    convert -size ${bw}x${bh} xc:none \
+            -fill "$box_fill" \
+            -draw "roundrectangle 0,0,${bwm1},${bhm1},${radius},${radius}" \
+            /tmp/captionbox.png
+
+    # Lay text onto box
+    captiongraphic="${captiongraphic:-/tmp/caption.png}"
+    composite -gravity northwest \
+              -geometry +${pad}+${pad} \
+              /tmp/captiontext.png \
+              /tmp/captionbox.png \
+              "${captiongraphic}"
+
+    # ----- Tilt control -----
+    : "${TILT_PCT:=0}"          # -100..100
+    : "${MAX_TILT_DEG:=15}"     # degrees
+    # angle = (TILT_PCT / 100) * MAX_TILT_DEG  (supports negative values)
+    angle=$(awk -v p="$TILT_PCT" -v m="$MAX_TILT_DEG" 'BEGIN{printf "%.3f", (p/100.0)*m}')
+
+    # Rotate the caption graphic around its center, keep transparent background
+    captiongraphic_rot="/tmp/caption_rot.png"
+    comment "Rotate caption by ${angle} degrees"
+    convert "${captiongraphic}" \
+            -background none -alpha set -virtual-pixel transparent \
+            -rotate "${angle}" \
+            "${captiongraphic_rot}"
+
+    # Measure rotated bounds for centering
+    rbw=$(identify -format "%w" "${captiongraphic_rot}")
+    rbh=$(identify -format "%h" "${captiongraphic_rot}")
+
+    # Center horizontally; fixed Y at 200 (top of rotated canvas)
+    xoff=$(( (tmpwidth - rbw) / 2 ))
+    [ $xoff -lt 0 ] && xoff=0
+
+    out="${out:-/tmp/out.png}"
+    comment "Composite rotated caption at x=${xoff}, y=${yoff}"
+    composite -gravity northwest \
+              -geometry +${xoff}+${yoff} \
+              "${captiongraphic_rot}" \
+              "${tmppic}" \
+              "${out}"
 fi
 
 if [ -z ${debug} ]; then 
@@ -144,18 +196,6 @@ if [ -z ${debug} ]; then
     telegram-send --video "${outmovie}" --caption "${caption}"
 fi
 
-comment "Let's make it a little smaller for WP"
-convert "${wp_pic}" -resize 540x540 "/tmp/${filename}"
-
-comment "Upload image to WP..."
-host=$(grep -A 1 @${site} ${HOME}/.wp-cli/config.yml | grep ssh | cut -d " " -f 6)
-scp "/tmp/${filename}" "${host}:/tmp/${filename}"
-imgid=$(wp @${site} media import "/tmp/${filename}" \
-    --porcelain \
-    --title="${caption}"
-)
-imgurl=$(wp @${site} db query "SELECT guid FROM wp_posts  WHERE ID=\"${imgid}\"" | head -n 2 | tail -1)
-comment "Image uploaded with ID of ${imgid} (${imgurl})"
 
 post="<!-- wp:post-featured-image /-->
 
@@ -164,27 +204,67 @@ post="<!-- wp:post-featured-image /-->
 
 "
 
-#comment "Create post..."
-#postid=$(echo "${post}" | wp @${site} post create - \
-#    --porcelain \
-#    --post_type="jetpack-social-note" \
-#    --post_status="draft" \
-#    --post_category=${category["${site}"]})
+if [ ${ptype} == "story" ]; then
+    comment "Upload story image to WP..."
+    host=$(grep -A 1 @${site} ${HOME}/.wp-cli/config.yml | grep ssh | cut -d " " -f 6)
+    scp "${out}" "${host}:/tmp/${filename}"
+    imgid=$(wp @${site} media import "/tmp/${filename}" \
+        --porcelain \
+        --title="${caption}"
+    )
+    imgurl=$(wp @${site} db query "SELECT guid FROM wp_posts  WHERE ID=\"${imgid}\"" | head -n 2 | tail -1)
+    comment "Image uploaded with ID of ${imgid} (${imgurl})"
 
-comment "Create post..."
-tags=$(echo "$caption" | grep -oE '#[A-Za-z0-9_]+' | sed 's/#//g' | paste -sd, -)
-postid=$(echo "${post}" | wp @${site} post create - \
-    --porcelain --post_category=${category["${site}"]} \
-    --post_title="${notags}" \
-    --post_author="${author["${site}"]}" \
-    --post_status="draft" \
-    --post_excerpt="${notags}" \
-    --tags_input="${tags}")
+    comment "Create social note..."
+    postid=$(echo "${post}" | wp @${site} post create - \
+        --porcelain \
+        --post_type="jetpack-social-note" \
+        --post_status="draft" \
+        --post_category=${category["${site}"]})
 
-postformat=${post_format["${site}"]}
-if [ ! -z "${postformat}" ]; then
-    comment "Set post_format to Image"
-    wp @${site} db query "insert into wp_term_relationships (object_id,term_taxonomy_id) VALUES (\"${postid}\",\"${postformat}\")"
+    comment "Turn off sharing to FB and Threads because Instagram will do that..."
+    #FB
+    wp @${site} post meta set ${postid} _wpas_skip_publicize_21764758 1
+    #Threads
+    wp @${site} post meta set ${postid} _wpas_skip_publicize_25478617 1
+    # Instagram
+    wp @${site} post meta set ${postid} _wpas_skip_publicize_25478615 1
+    ## Bluesky 
+    #wp @${site} post meta set ${postid} _wpas_skip_publicize_25478607 1
+else
+    comment "Let's make it a little smaller for WP"
+    convert "${wp_pic}" -resize 540x540 "/tmp/${filename}"
+
+    comment "Upload image to WP..."
+    host=$(grep -A 1 @${site} ${HOME}/.wp-cli/config.yml | grep ssh | cut -d " " -f 6)
+    scp "/tmp/${filename}" "${host}:/tmp/${filename}"
+    imgid=$(wp @${site} media import "/tmp/${filename}" \
+        --porcelain \
+        --title="${caption}"
+    )
+    imgurl=$(wp @${site} db query "SELECT guid FROM wp_posts  WHERE ID=\"${imgid}\"" | head -n 2 | tail -1)
+    comment "Image uploaded with ID of ${imgid} (${imgurl})"
+
+    comment "Create post..."
+    tags=$(echo "$caption" | grep -oE '#[A-Za-z0-9_]+' | sed 's/#//g' | paste -sd, -)
+    postid=$(echo "${post}" | wp @${site} post create - \
+        --porcelain --post_category=${category["${site}"]} \
+        --post_title="${notags}" \
+        --post_author="${author["${site}"]}" \
+        --post_status="draft" \
+        --post_excerpt="${notags}" \
+        --tags_input="${tags}")
+
+    postformat=${post_format["${site}"]}
+    if [ ! -z "${postformat}" ]; then
+        comment "Set post_format to Image"
+        wp @${site} db query "insert into wp_term_relationships (object_id,term_taxonomy_id) VALUES (\"${postid}\",\"${postformat}\")"
+    fi
+    comment "Turn off sharing to FB and Threads because Instagram will do that..."
+    #FB
+    wp @${site} post meta set ${postid} _wpas_skip_publicize_21764758 1
+    #Threads
+    wp @${site} post meta set ${postid} _wpas_skip_publicize_25478617 1
 fi
 
 comment "Set featured image"
@@ -194,11 +274,6 @@ comment "Set picture's (${imgid}) post_parent to new post (${postid})"
 #wp @${site} db query "update wp_posts set post_parent=\"${postid}\" where ID=\"${imgid}\""
 wp @${site} post update ${imgid} --post_parent=${postid}
 
-comment "Turn off sharing to FB and Threads because Instagram will do that..."
-#FB
-wp @${site} post meta set ${postid} _wpas_skip_publicize_21764758 1
-#Threads
-wp @${site} post meta set ${postid} _wpas_skip_publicize_25478617 1
 
 comment "Set link message"
 wp @${site} post meta set ${postid} _wpas_mess " "
