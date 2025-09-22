@@ -92,6 +92,7 @@ fi
 
 ## Set merge globally
 git config --global pull.rebase false
+git config --global init.defaultBranch main
 
 ## Set git name and email
 defgitname=$(hostname)

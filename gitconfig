@@ -1,5 +1,7 @@
 [user]
 	name = Goz
 	email = dev@collinsoft.com
+[pull]
+	rebase = false
 [init]
 	defaultBranch = main

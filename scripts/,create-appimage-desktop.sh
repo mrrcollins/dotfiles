@@ -19,6 +19,7 @@ if [ ! -f "$APPIMAGE_PATH" ]; then
     exit 1
 fi
 
+chmod +x "${APPIMAGE_PATH}"
 TEMP_SQUASHFS_PATH=$(mktemp -d)
 APPIMAGE_FULLPATH=$(readlink -e "$APPIMAGE_PATH")
 APPIMAGE_FILENAME=$(basename "$APPIMAGE_PATH")
