@@ -10,7 +10,8 @@ ytdlp="${HOME}/.local/bin/yt-dlp"
 
 echo "${ytdlp}"
 #sudo ${ytdlp} -U
-${ytdlp} --update-to nightly
+#${ytdlp} --update-to nightly
+pip install yt-dlp -U
 #filename=$(${ytdlp} --cookies ${HOME}/cookies.SocialMedia.txt --user-agent facebookexternalhit/1.1 --windows-filenames --get-filename "${1}")
 
 if [[ "${1}" =~ "tiktok.com" ]]; then
