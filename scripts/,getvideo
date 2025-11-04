@@ -15,11 +15,12 @@ pip install yt-dlp -U
 #filename=$(${ytdlp} --cookies ${HOME}/cookies.SocialMedia.txt --user-agent facebookexternalhit/1.1 --windows-filenames --get-filename "${1}")
 
 if [[ "${1}" =~ "tiktok.com" ]]; then
-    filename=$(${ytdlp} --extractor-args "tiktok:api_hostname=api22-normal-c-useast2a.tiktokv.com" --user-agent facebookexternalhit/1.1 --windows-filenames --get-filename "${1}")
+    filename=$(${ytdlp} --extractor-args "tiktok:api_hostname=api22-normal-c-useast2a.tiktokv.com" --windows-filenames --get-filename "${1}")
 else
-    filename=$(${ytdlp} --user-agent facebookexternalhit/1.1 --windows-filenames --get-filename "${1}")
+    filename=$(${ytdlp} --windows-filenames --get-filename "${1}")
 fi
 
+#filename=$(${ytdlp} --windows-filenames --get-filename "${1}")
 #filename="@StarTrekGuy  [7304431911953255722].mp4"
 
 fullname=$(echo -n "${filename%.*}" | sed -e 's/[^[:alnum:]]/-/g' | tr -s '-' | sed -e 's/^-//' | sed -e 's/-$//')
@@ -34,13 +35,16 @@ echo "${name} - ${videoid} - ${ext} - ${file}"
 
 #--extractor-args "tiktok:api_hostname=api22-normal-c-useast2a.tiktokv.com" \
 if [[ "${1}" =~ "tiktok.com" ]]; then
-    ${ytdlp} -S res,ext:mp4:m4a --recode mp4 --user-agent facebookexternalhit/1.1 \
+    ${ytdlp} -S res,ext:mp4:m4a --recode mp4 \
         --windows-filenames -o "${file}" \
         ${ap} \
         "${1}"
 else
-    ${ytdlp} -S res,ext:mp4:m4a --recode mp4 --user-agent facebookexternalhit/1.1 --windows-filenames -o "${file}" "${1}"
+    ${ytdlp} -S res,ext:mp4:m4a --recode mp4 --windows-filenames ${ap} -o "${file}" "${1}"
 fi
+
+#${ytdlp} -S res,ext:mp4:m4a --recode mp4 --windows-filenames -o "${file}" "${1}"
+
 uploaded=$(jq -r .uploader "${file%.*}.info.json")
 description=$(jq -r .description "${file%.*}.info.json")
 url=$(jq -r '.formats[1].http_headers.Referer' "${file%.*}.info.json")
