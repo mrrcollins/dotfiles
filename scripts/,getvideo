@@ -29,6 +29,7 @@ videoid="${fullname##*-}"
 name="${fullname%-*}"
 ext="${filename##*.}"
 file="${name:0:40}-${videoid}-${t}.mp4"
+recompress="${name:0:40}-${t}-recompress.mp4"
 
 echo "${name} - ${videoid} - ${ext} - ${file}"
 
@@ -59,7 +60,10 @@ caption="${description:0:100}
 telegram-send --video "${file}" --caption "${caption}"
 videoupload -t "${filename:0:50}" -c "${caption}" "${file}"
 
-[ $HOSTNAME == "dev" ] && ffmpeg -i "${file}" -vcodec libx264 -acodec aac "${name:0:40}-recompress.mp4"
-[ $HOSTNAME == "dev" ] && rsync --progress "${name:0:40}-${t}-recompress.mp4" icloud:/Users/goz/icloud/Movies/iPhoneRecord/
+if [ $HOSTNAME == "dev" ]; then
+    ffmpeg -i "${file}" -vcodec libx264 -acodec aac "${recompress}"
+    rsync --progress "${recompress}" icloud:/Users/goz/icloud/Movies/iPhoneRecord/
+fi
+
 
 
