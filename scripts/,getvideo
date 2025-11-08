@@ -60,6 +60,6 @@ telegram-send --video "${file}" --caption "${caption}"
 videoupload -t "${filename:0:50}" -c "${caption}" "${file}"
 
 [ $HOSTNAME == "dev" ] && ffmpeg -i "${file}" -vcodec libx264 -acodec aac "${name:0:40}-recompress.mp4"
-[ $HOSTNAME == "dev" ] && rsync --progress "${name:0:40}-recompress.mp4" icloud:/Users/goz/icloud/Movies/iPhoneRecord/
+[ $HOSTNAME == "dev" ] && rsync --progress "${name:0:40}-${t}-recompress.mp4" icloud:/Users/goz/icloud/Movies/iPhoneRecord/
 
 
