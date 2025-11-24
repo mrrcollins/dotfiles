@@ -12,8 +12,9 @@ ytdlp="${HOME}/.local/bin/yt-dlp"
 echo "${ytdlp}"
 #sudo ${ytdlp} -U
 #${ytdlp} --update-to nightly
-pip install yt-dlp -U
+#pip install yt-dlp -U
 #filename=$(${ytdlp} --cookies ${HOME}/cookies.SocialMedia.txt --user-agent facebookexternalhit/1.1 --windows-filenames --get-filename "${1}")
+${ytdlp} -U
 
 if [[ "${1}" =~ "tiktok.com" ]]; then
     filename=$(${ytdlp} --extractor-args "tiktok:api_hostname=api22-normal-c-useast2a.tiktokv.com" --windows-filenames --get-filename "${1}")

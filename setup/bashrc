@@ -320,3 +320,5 @@ function y() {
 export PATH="$PATH:$HOME/.rvm/bin"
 
 [[ -n $SSH_TTY ]] && tma main
+. "/home/sysadmin/.deno/env"
+source /home/sysadmin/.local/share/bash-completion/completions/deno.bash
