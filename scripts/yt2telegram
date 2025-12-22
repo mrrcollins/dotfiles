@@ -16,6 +16,7 @@ yturl="${1}"
 #songname=$(/usr/local/bin/youtube-dl -o "%(title)s.%(ext)s" --get-filename "${yturl}")
 songname=$(yt-dlp -o "%(title)s.%(ext)s" --get-filename "${yturl}")
 #/usr/local/bin/youtube-dl -x -o "%(title)s.%(ext)s" --audio-format mp3 "${yturl}"
+#yt-dlp --extractor-args "youtube:player_js_version=actual" -x -o "%(title)s.%(ext)s" --audio-format mp3 "${yturl}"
 yt-dlp -x -o "%(title)s.%(ext)s" --audio-format mp3 "${yturl}"
 
 #${HOME}/.config/dotfiles/scripts/telegram-notify --user "-1001471206245" --text "${songname%.*}" --document "${songname%.*}.mp3"

@@ -1,3 +1,7 @@
 [user]
-	name = Venkman
-	email = venkman@collinsoft.com
+	name = Goz
+	email = dev@collinsoft.com
+[pull]
+	rebase = false
+[init]
+	defaultBranch = main
