@@ -34,7 +34,7 @@ comment() {
 
 
 # Picture category for site
-category["r"]="361"
+category["r"]="355"
 category["e"]="2074"
 
 # Post_format for picture
@@ -218,7 +218,7 @@ if [ ${ptype} == "story" ]; then
     comment "Create social note..."
     postid=$(echo "${post}" | wp @${site} post create - \
         --porcelain \
-        --post_type="jetpack-social-note" \
+        --post_type="post" \
         --post_status="draft" \
         --post_category=${category["${site}"]})
 

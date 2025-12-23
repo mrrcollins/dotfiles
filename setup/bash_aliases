@@ -8,6 +8,7 @@ alias ..="cd .. && ls"
 alias ...="cd ../.. && ls"
 alias ....="cd ../../.. && ls"
 
+alias up="sudo apt update && sudo apt upgrade -y"
 # Vim
 alias v='vim $(fzf)'
 
