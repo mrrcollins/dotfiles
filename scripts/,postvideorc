@@ -9,15 +9,16 @@ wd="/tmp/postvideorc"
 # Set `debug=""` when not debugging, `debug=1` when debugging
 debug=""
 
-post_status="pending"
+post_status="publish"
 [ ${debug} ] && post_status="draft"
 
 comment() {
     [ ${debug} ] && echo "${1}"
+	echo "${1}"
 }
 
 # Site information
-category="361"
+category="892"
 post_format="400"
 author="1"
 
@@ -41,24 +42,58 @@ if [ -z "${title}" ] || [ -z "${video}" ]; then
     fi
 fi
 
+# 1) pull hashtags (WP-ish), strip "#", lowercase, comma-join
+tags=$(
+  grep -oE '#[[:alnum:]_][[:alnum:]_-]*' <<<"$caption" \
+  | sed 's/^#//' \
+  | tr '[:upper:]' '[:lower:]' \
+  | paste -sd, -
+)
+
+# 2) remove hashtags from caption, then tidy whitespace
+caption=$(
+  sed -E 's/#[[:alnum:]_][[:alnum:]_-]*//g' <<<"$caption" \
+  | sed -E 's/[[:space:]]+/ /g; s/^ | $//g'
+)
+
+echo "Uploading video"
 if [ ${debug} ]; then
     videotoken="eQEGI5ZOe"
 else
     videotoken=$(videoupload -t "${title}" -c "${caption}" -u rc "${video}")
 fi
-thumbnail="${videotoken}.jpg"
+convert "/tmp/postvideorc/${videotoken}.jpg"  \( ${HOME}/Pictures/PlayButton.png -resize 128x128 \)   -gravity center -composite "/tmp/postvideorc/${videotoken}.png"
+thumbnail="${videotoken}.png"
 
 comment "Video token: ${videotoken}, thumbnail: ${thumbnail}"
 
-post="
+videosize=$(
+  ffprobe -v error -select_streams v:0 \
+    -show_entries stream=width,height:stream_tags=rotate \
+    -of default=nw=1:nk=1 "$video" |
+  awk '
+    NR==1{w=$1}
+    NR==2{h=$1}
+    NR==3{r=$1}
+    END{
+      if (r==90 || r==270) { t=w; w=h; h=t }
+      if (w > h) print "width=\"560\" height=\"315\"";
+      else       print "width=\"315\" height=\"560\"";
+    }'
+)
+
+
+post=$(cat <<__POST__
 <!-- wp:html -->
-<iframe width="560" height="315" src="https://video.goz2.us/embed?m=${videotoken}" frameborder="0" allowfullscreen></iframe>
+<iframe ${videosize} src="https://video.goz2.us/embed?m=${videotoken}" frameborder="0" allowfullscreen></iframe>
 <!-- /wp:html -->
 
 <!-- wp:paragraph -->
 <p>${caption}</p>
 <!-- /wp:paragraph -->
-"
+__POST__
+)
+
 postid=$(echo "${post}" | wp @r post create - \
     --porcelain --post_category="${category}" \
     --post_title="${title}" \
@@ -68,7 +103,7 @@ postid=$(echo "${post}" | wp @r post create - \
     --tags_input="${tags}")
 
 comment "Set post_format to Video"
-wp @r db query "insert into wp_term_relationships (object_id,term_taxonomy_id) VALUES (\"${postid}\",\"${post_format}\")"
+wp @r db query "insert into wp_term_relationships (object_id,term_taxonomy_id) VALUES ('${postid}','${post_format}')"
 
 comment "Upload image to WP..."
 host=$(grep -A 1 @r ${HOME}/.wp-cli/config.yml | grep ssh | cut -d " " -f 6)
