@@ -95,16 +95,36 @@ winget install python3
 
 Update-PathSafe
 
-# Alias sudo to gsudo
+# Load my profile from my dotfiles directory
 $ProfilePath = $PROFILE
-if (-not (Test-Path $ProfilePath)) {
-    New-Item -Path $ProfilePath -ItemType File -Force
+$LineToAdd = '. "$HOME\.config\dotfiles\WINPROFILE.ps1"'
+
+if (-not (Test-Path $ProfilePath)) { New-Item -Path $ProfilePath -ItemType File -Force | Out-Null }
+$AlreadyExists = Select-String -Path $ProfilePath -Pattern $LineToAdd -SimpleMatch -Quiet
+
+if (-not $AlreadyExists) {
+    Add-Content -Path $ProfilePath -Value "`n$LineToAdd"
+    Write-Host "Sourcing WINPROFILE.ps1" -ForegroundColor Green
+} else {
+    Write-Host "Already sourcing WINPROFILE.ps1" -ForegroundColor Gray
 }
-Add-Content -Path $ProfilePath -Value "`nSet-Alias -Name sudo -Value gsudo"
-. $ProfilePath
 
-Write-Host "Fixed: typing 'sudo' will now run 'gsudo'" -ForegroundColor Cyan
+# Alias sudo to gsudo
+$ProfilePath = "$HOME\.config\dotfiles\WINPROFILE.ps1"
+$LineToAdd = "Set-Alias -Name sudo -Value gsudo"
 
+if (-not (Test-Path $ProfilePath)) {
+    New-Item -Path $ProfilePath -ItemType File -Force | Out-Null
+}
+
+$AlreadyExists = Select-String -Path $ProfilePath -Pattern $LineToAdd -SimpleMatch -Quiet
+
+if (-not $AlreadyExists) {
+    Add-Content -Path $ProfilePath -Value "`n$LineToAdd"
+    Write-Host "Added sudo alias to profile." -ForegroundColor Green
+} else {
+    Write-Host "Profile already contains sudo alias. Skipping." -ForegroundColor Gray
+}
 
 #### Set registry settings ####
 # Add as many blocks here as you need. 
@@ -149,6 +169,8 @@ if (-not (Test-Path -Path $TargetFolder)) {
 #### Final Tasks ####
 Write-Host "Restarting Espanso..." -ForegroundColor Green
 #espanso restart
+$ProfilePath = $PROFILE
+$LineToAdd = "Set-Alias -Name sudo -Value gsudo"
 
 ## Setting up VIM
 # Define the paths
@@ -194,3 +216,5 @@ if (Test-Path $VimRc) {
 # Clone the plugins I use
 & "$env:USERPROFILE\vimfiles\bootstrap.ps1"
 
+# Return to home
+cd $HOME
