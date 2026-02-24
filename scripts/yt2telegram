@@ -19,7 +19,6 @@ songname=$(yt-dlp -o "%(title)s.%(ext)s" --get-filename "${yturl}")
 #yt-dlp --extractor-args "youtube:player_js_version=actual" -x -o "%(title)s.%(ext)s" --audio-format mp3 "${yturl}"
 yt-dlp -x -o "%(title)s.%(ext)s" --audio-format mp3 "${yturl}"
 
-#${HOME}/.config/dotfiles/scripts/telegram-notify --user "-1001471206245" --text "${songname%.*}" --document "${songname%.*}.mp3"
 /usr/local/bin/telegram-send --caption "${songname%.*}" --audio "${songname%.*}.mp3"
 
 [ $HOSTNAME == "dev" ] && rsync --progress "${songname%.*}.mp3" icloud:/Users/goz/icloud/Music/
