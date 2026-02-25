@@ -43,11 +43,11 @@ MESSAGE="$*"
 
 case "$level" in
 alert)
-  thread="4"
+  thread="${REDALERT}"
   prefix="🚨 "
   ;;
 warn)
-  thread="12"
+  thread="${YELLOWALERT}"
   prefix="⚠️ "
   ;;
 info)
