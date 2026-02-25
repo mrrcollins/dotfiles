@@ -1,29 +1,32 @@
 #!/bin/bash
 
-ACTION="Open Push"
-TITLE="Push notification from `hostname`"
-SUBTITLE="`date`"
-ICONURL="https://dl.dropboxusercontent.com/u/172539/icons/vps.png"
-SOUND=""
 CURL="/usr/bin/curl"
 
 if [ -e ~/.config/goznotify.conf ]; then
     source ~/.config/goznotify.conf
 else
     echo "Config file ~/.config/goznotify.conf not found."
+	echo "The config file needs the following:
+APIKEY=\"\"        	#Telegram bot token
+TO=\"\"				# Your chat id 
+BOTGROUP=\"\"		# group id with topics
+REDALERT=\"\"		# Critical alert thread id
+YELLOWALERT=\"\"	# Warning thread id
+"
     exit
+
 fi    
 
 sendTopic() {
 # Telegram Zuul
-	echo "Posting to ${BOTGROUP} - ${TOPIC}"
-	${CURL}  -X POST \
+	#echo "Posting to ${BOTGROUP} - ${TOPIC}"
+	${CURL} -s -X POST \
     https://api.telegram.org/bot${APIKEY}/sendMessage \
     --data-urlencode text="${prefix}${MESSAGE}" \
 	-d disable_web_page_preview=true \
     -d parse_mode="Markdown" \
 	-d message_thread_id="${TOPIC}" \
-    -d chat_id=${BOTGROUP}
+    -d chat_id=${BOTGROUP} > /dev/null
 
 }
 
