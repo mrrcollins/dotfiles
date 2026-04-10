@@ -68,7 +68,6 @@ function Update-PathSafe {
 
 
 #### Install apps ####
-<#
 winget install OneCommander --source winget
 winget install Obsidian.Obsidian 
 winget install winfsp
@@ -84,12 +83,14 @@ winget install zen-browser
 winget install gsudo
 winget install vim.vim
 winget install python3
-#>
+winget install Telegram.TelegramDesktop
+winget install rclone
+winget install Eugeny.Tabby
 
 ##### Add VIM to the path
 [System.Environment]::SetEnvironmentVariable(
     "Path",
-    [System.Environment]::GetEnvironmentVariable("Path", "User") + ";C:\Program Files\Vim\vim91",
+    [System.Environment]::GetEnvironmentVariable("Path", "User") + ";C:\Program Files\Vim\vim92",
     "User"
 )
 
