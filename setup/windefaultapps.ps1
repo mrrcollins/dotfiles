@@ -77,7 +77,7 @@ winget install Git.Git
 winget install Greenshot.Greenshot
 winget install Google.Chrome
 winget install Google.GoogleDrive
-winget install powertoys
+winget install Microsoft.PowerToys
 winget install espanso
 winget install zen-browser
 winget install gsudo
