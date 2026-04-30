@@ -325,3 +325,6 @@ function today() {
 #export PATH="$PATH:$HOME/.rvm/bin"
 
 # [[ -n $SSH_TTY ]] && tma main
+
+# Export working directory for terminals [Shell working directory reporting · Eugeny/tabby Wiki](https://github.com/Eugeny/tabby/wiki/Shell-working-directory-reporting)
+export PS1="$PS1\[\e]1337;CurrentDir="'$(pwd)\a\]'
