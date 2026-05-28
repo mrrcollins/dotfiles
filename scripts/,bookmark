@@ -1,0 +1,9 @@
+#!/bin/bash
+
+url=${1}
+tags="${2}"
+
+title=$(wget -qO- "${url}" | perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si')
+[ -z "${title}" ] && title="A new post added `date +'%Y-%m-%d-%H-%M'`"
+
+/usr/local/bin/shaarli post-link --url "${url}" --private --tags "${tags}" --title "${title}"

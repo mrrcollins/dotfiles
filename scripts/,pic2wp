@@ -1,0 +1,296 @@
+#!/bin/bash
+
+# Set to 1
+# Threads: _wpas_skip_publicize_25478617 
+# Facebook: _wpas_skip_publicize_21764758
+# Instagram: _wpas_skip_publicize_25478615
+# Bluesky: _wpas_skip_publicize_25478607
+
+
+declare -A category
+declare -A post_format
+declare -A author
+
+tmppic="/tmp/sharepic.png"
+wp_pic="/tmp/wp_pic.jpg"
+story_pic="/tmp/story_pic.jpg"
+font="${HOME}/Documents/Verdana.ttf"
+font="${HOME}/Documents/ShantellSans-SemiBold.ttf"
+captiongraphic="/tmp/caption.png"
+out="/tmp/captionout.png"
+outmovie="/tmp/out.mp4"
+wd="/tmp"
+TILT_PCT=-40
+ptype="pic"
+
+#debug=1
+
+post_status="publish"
+[ ! -z ${debug} ] && post_status="draft"
+
+comment() {
+    [ ! -z ${debug} ] && echo "${1}"
+}
+
+
+# Picture category for site
+category["r"]="355"
+category["e"]="2074"
+
+# Post_format for picture
+post_format["r"]="359"
+post_format["e"]=""
+
+# Author
+author["r"]="1"
+author["e"]="1"
+
+while getopts c:s:p:l:t:k: flag
+do
+    case "${flag}" in
+        c) caption=${OPTARG};;
+        s) site=${OPTARG};;
+        p) pic=${OPTARG};;
+        l) loc=${OPTARG};;
+        t) TILT_PCT=${OPTARG};;
+        k) ptype=${OPTARG};;
+    esac
+done
+
+if [ -z ${site} ] || [ -z "${pic}" ]; then
+    echo "Usage: ,sharepic -s [r|e] -c 'Caption to add' -p '/path/to/pic'"
+    exit
+fi
+
+comment "Setting up the filename and extension"
+ext="${pic##*.}"
+md5=$(md5sum "${pic}" | awk '{print $1}' | head -c 5)
+if [ -z "${caption}" ]; then
+    filename=$(date +"%Y-%m-%d-%H-%M")"-${md5}.${ext}"
+else
+    filename=$(echo "${caption}" | tr '[:upper:]' '[:lower:]' | sed -e 's/ /-/g' -e 's/[^a-z0-9-]//g' -e 's/--*/-/g' -e 's/^-//' -e 's/-$//' | head -c 16)"-${md5}.${ext}"
+fi
+
+comment "Filename is ${filename}"
+
+comment "Resize the ${pic} to be 1080 width (${tmppic})"
+convert "${pic}" -resize 1080x "${wp_pic}"
+convert "${pic}" -background black -gravity center \
+  -resize 1080x1920 -extent 1080x1920 -strip "${tmppic}"
+
+tmpwidth=$(identify -format "%w" "${tmppic}")
+tmpheight=$(identify -format "%h" "${tmppic}")
+
+comment "Set caption width and height"
+cw=680
+ch=250
+cwminus1=$((${cw}-1))
+chminus1=$((${ch}-1))
+cwminus10=$((${cw}-10))
+chminus10=$((${ch}-10))
+
+comment "Working on ${tmppic} (${tmpwidth}x${tmpheight})"
+
+comment "If there is a caption, add it to the image"
+# Strip hashtags and tidy spacing
+notags="${caption//#[^ ]*/}"
+notags=$(echo "$notags" | xargs)
+
+#!#if [ -n "${caption:-}" ]; then
+#!#    # Strip hashtags and tidy spacing
+#!#    notags="${caption//#[^ ]*/}"
+#!#    notags=$(echo "$notags" | xargs)
+#!#
+#!#    # Style
+#!#    : "${font:=Arial}"
+#!#    text_fill="black"
+#!#    box_fill="white"
+#!#    pad=20
+#!#    radius=20
+#!#
+#!#    # --- Geometry constraints ---
+#!#    maxh=$(( tmpheight / 8 ))   # cap box height at 1/8 of image height
+#!#    yoff=200                    # absolute Y for the TOP edge of the (rotated) canvas
+#!#
+#!#    # Caption width ~70% of image width (with bounds)
+#!#    cw=$(( tmpwidth * 7 / 10 ))
+#!#    [ $cw -lt 240 ] && cw=240
+#!#    margin=40
+#!#    [ $cw -gt $(( tmpwidth - margin )) ] && cw=$(( tmpwidth - margin ))
+#!#
+#!#    # Inner drawing height (box minus padding)
+#!#    inner_h=$(( maxh - pad*2 ))
+#!#    [ $inner_h -lt 40 ] && inner_h=40
+#!#
+#!#    comment "Render wrapped caption"
+#!#    convert -background none \
+#!#            -fill "$text_fill" \
+#!#            -font "$font" \
+#!#            -gravity Center \
+#!#            -size ${cw}x${inner_h} \
+#!#            caption:"${notags}" \
+#!#            /tmp/captiontext.png
+#!#
+#!#    # Measure text, build rounded box
+#!#    tw=$(identify -format "%w" /tmp/captiontext.png)
+#!#    th=$(identify -format "%h" /tmp/captiontext.png)
+#!#    bw=$(( tw + pad*2 ))
+#!#    bh=$(( th + pad*2 ))
+#!#    [ $bh -gt $maxh ] && bh=$maxh
+#!#    bwm1=$(( bw - 1 ))
+#!#    bhm1=$(( bh - 1 ))
+#!#
+#!#    comment "Create rounded box ${bw}x${bh}"
+#!#    convert -size ${bw}x${bh} xc:none \
+#!#            -fill "$box_fill" \
+#!#            -draw "roundrectangle 0,0,${bwm1},${bhm1},${radius},${radius}" \
+#!#            /tmp/captionbox.png
+#!#
+#!#    # Lay text onto box
+#!#    captiongraphic="${captiongraphic:-/tmp/caption.png}"
+#!#    composite -gravity northwest \
+#!#              -geometry +${pad}+${pad} \
+#!#              /tmp/captiontext.png \
+#!#              /tmp/captionbox.png \
+#!#              "${captiongraphic}"
+#!#
+#!#    # ----- Tilt control -----
+#!#    : "${TILT_PCT:=0}"          # -100..100
+#!#    : "${MAX_TILT_DEG:=15}"     # degrees
+#!#    # angle = (TILT_PCT / 100) * MAX_TILT_DEG  (supports negative values)
+#!#    angle=$(awk -v p="$TILT_PCT" -v m="$MAX_TILT_DEG" 'BEGIN{printf "%.3f", (p/100.0)*m}')
+#!#
+#!#    # Rotate the caption graphic around its center, keep transparent background
+#!#    captiongraphic_rot="/tmp/caption_rot.png"
+#!#    comment "Rotate caption by ${angle} degrees"
+#!#    convert "${captiongraphic}" \
+#!#            -background none -alpha set -virtual-pixel transparent \
+#!#            -rotate "${angle}" \
+#!#            "${captiongraphic_rot}"
+#!#
+#!#    # Measure rotated bounds for centering
+#!#    rbw=$(identify -format "%w" "${captiongraphic_rot}")
+#!#    rbh=$(identify -format "%h" "${captiongraphic_rot}")
+#!#
+#!#    # Center horizontally; fixed Y at 200 (top of rotated canvas)
+#!#    xoff=$(( (tmpwidth - rbw) / 2 ))
+#!#    [ $xoff -lt 0 ] && xoff=0
+#!#
+#!#    out="${out:-/tmp/out.png}"
+#!#    comment "Composite rotated caption at x=${xoff}, y=${yoff}"
+#!#    composite -gravity northwest \
+#!#              -geometry +${xoff}+${yoff} \
+#!#              "${captiongraphic_rot}" \
+#!#              "${tmppic}" \
+#!#              "${out}"
+#!#fi
+
+#!#if [ -z ${debug} ]; then 
+#!#    telegram-send --caption="${caption}" -i "${out}"
+#!#fi
+
+#!#comment "Create movie for TikTok"
+#!#rm "${outmovie}"
+#!##/usr/bin/ffmpeg -hide_banner -loglevel error -framerate 30 -i "${out}" -t 8 -c:v libx264 -pix_fmt yuv420p -vf "scale=1080:-1,loop=-1:1,pad=ceil(iw/2)*2:ceil(ih/2)*2" -movflags faststart "${outmovie}"
+#!#
+#!#/usr/bin/ffmpeg -hide_banner -loglevel error -framerate 30 -i "${out}" -t 8 -c:v libx264 -pix_fmt yuv420p -vf "scale=8000:-1,zoompan=z='zoom+0.001':x=iw/2-(iw/zoom/2):y=ih/2-(ih/zoom/2):d=8*30:s=1080x1920:fps=30,pad=ceil(iw/2)*2:ceil(ih/2)*2" -movflags faststart "${outmovie}"
+#!#
+#!#
+#!#if [ -z ${debug} ]; then 
+#!#    telegram-send --video "${outmovie}" --caption "${caption}"
+#!#fi
+
+
+post="<!-- wp:post-featured-image /-->
+
+<!-- wp:paragraph -->
+<p>${notags}</p>
+
+"
+
+if [ ${ptype} == "story" ]; then
+    comment "Upload story image to WP..."
+    host=$(grep -A 1 @${site} ${HOME}/.wp-cli/config.yml | grep ssh | cut -d " " -f 6)
+    scp "${out}" "${host}:/tmp/${filename}"
+    imgid=$(wp @${site} media import "/tmp/${filename}" \
+        --porcelain \
+        --title="${caption}"
+    )
+    imgurl=$(wp @${site} db query "SELECT guid FROM wp_posts  WHERE ID=\"${imgid}\"" | head -n 2 | tail -1)
+    comment "Image uploaded with ID of ${imgid} (${imgurl})"
+
+    comment "Create social note..."
+    postid=$(echo "${post}" | wp @${site} post create - \
+        --porcelain \
+        --post_title="${notags}" \
+        --post_author="${author["${site}"]}" \
+        --post_type="post" \
+        --post_status="draft" \
+        --post_excerpt="${notags}" \
+        --tags_input="${tags}" \
+        --post_category=${category["${site}"]})
+
+    postformat=${post_format["${site}"]}
+    if [ ! -z "${postformat}" ]; then
+        comment "Set post_format to Image"
+        wp @${site} db query "insert into wp_term_relationships (object_id,term_taxonomy_id) VALUES (\"${postid}\",\"${postformat}\")"
+    fi
+    comment "Turn off sharing to FB and Threads because Instagram will do that..."
+    #FB
+    wp @${site} post meta set ${postid} _wpas_skip_publicize_21764758 1
+    #Threads
+    wp @${site} post meta set ${postid} _wpas_skip_publicize_25478617 1
+    # Instagram
+    wp @${site} post meta set ${postid} _wpas_skip_publicize_25478615 1
+    ## Bluesky 
+    #wp @${site} post meta set ${postid} _wpas_skip_publicize_25478607 1
+else
+    comment "Let's make it a little smaller for WP"
+    convert "${wp_pic}" -resize 540x540 "/tmp/${filename}"
+
+    comment "Upload image to WP..."
+    host=$(grep -A 1 @${site} ${HOME}/.wp-cli/config.yml | grep ssh | cut -d " " -f 6)
+    scp "/tmp/${filename}" "${host}:/tmp/${filename}"
+    imgid=$(wp @${site} media import "/tmp/${filename}" \
+        --porcelain \
+        --title="${caption}"
+    )
+    imgurl=$(wp @${site} db query "SELECT guid FROM wp_posts  WHERE ID=\"${imgid}\"" | head -n 2 | tail -1)
+    comment "Image uploaded with ID of ${imgid} (${imgurl})"
+
+    comment "Create post..."
+    tags=$(echo "$caption" | grep -oE '#[A-Za-z0-9_]+' | sed 's/#//g' | paste -sd, -)
+    postid=$(echo "${post}" | wp @${site} post create - \
+        --porcelain --post_category=${category["${site}"]} \
+        --post_title="${notags}" \
+        --post_author="${author["${site}"]}" \
+        --post_status="draft" \
+        --post_excerpt="${notags}" \
+        --tags_input="${tags}")
+
+    postformat=${post_format["${site}"]}
+    if [ ! -z "${postformat}" ]; then
+        comment "Set post_format to Image"
+        wp @${site} db query "insert into wp_term_relationships (object_id,term_taxonomy_id) VALUES (\"${postid}\",\"${postformat}\")"
+    fi
+    comment "Turn off sharing to FB and Threads because Instagram will do that..."
+    #FB
+    wp @${site} post meta set ${postid} _wpas_skip_publicize_21764758 1
+    #Threads
+    wp @${site} post meta set ${postid} _wpas_skip_publicize_25478617 1
+fi
+
+comment "Set featured image"
+wp @${site} post meta update ${postid} _thumbnail_id ${imgid}
+
+comment "Set picture's (${imgid}) post_parent to new post (${postid})"
+#wp @${site} db query "update wp_posts set post_parent=\"${postid}\" where ID=\"${imgid}\""
+wp @${site} post update ${imgid} --post_parent=${postid}
+
+
+comment "Set link message"
+wp @${site} post meta set ${postid} _wpas_mess " "
+
+comment "Publish!"
+wp @${site} post update ${postid} --post_status=${post_status}
+

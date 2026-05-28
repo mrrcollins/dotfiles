@@ -23,7 +23,7 @@ echo -n "Create post (y/n)? "
 read -e yesno
 
 if [ ${yesno} == "y" ]; then
-    cat ${postfile} | wp ${site} post create - --post_category=${category} --post_title="${posttitle}" --tags_input="${tags}"
+    cat ${postfile} | wp ${site} post create - --post_category=${category} --post_title="${posttitle}" --tags_input="${tags}" --post_type=""
     git mv ${postfile} ../Archive/`date +"%Y"`/
 fi
 

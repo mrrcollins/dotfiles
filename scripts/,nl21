@@ -1,0 +1,58 @@
+#!/bin/bash
+
+## New Drafts
+## Modified from GozNote
+## Quickly create notes from the commandline or something like Alfred
+## v.05 - 2023-12-25 - Create drafts for Learn21
+## v.04 - 2021-03-09 - I'm removing the prepending of the date. I'll add
+##          it manually with an Espanso expansion if I want it. The file
+##          extension is changed to `md`.
+## v.03 - 2019/08/25 - Create files with only the last two digits of
+## the year for the start of the filename instead of the whole year.
+## v.02 - 2019/08/05
+## v.01 - 2018/12/04
+##
+## Previous GozNote versions
+## v.03 - 2013/10/28
+# The file name is now created from the slug of the title
+#
+## v.02 - 2013/04/29
+## v.01 - 2013/01/09
+
+if [ $# -eq 0 ]; then
+    echo "NewNote v.02"
+    echo "Enter the name of the note as the argument"
+    exit
+fi
+
+TITLE="${1}"
+if [ ! -z "${2}" ]; then
+    DUEDATE="${2} "$(date +"%T")
+else
+    DUEDATE=`date +"%Y-%m-%d %T"`
+    due=$(date -d "thursday" +"%Y-%m-%d")
+    publish=$(date -d "1 week next thursday" +"%Y-%m-%d")
+fi
+
+EDITOR="vim + +startinsert"
+DEFAULTFOLDER="."
+EXT="md"
+#PREPEND="`date +%Y-%m-%d`-"
+PREPEND=""
+
+SLUG=$(echo -n "${TITLE}" | sed -e 's/[^[:alnum:]]/-/g' | tr -s '-' | tr A-Z a-z)
+#if [[ "${TITLE:0:1}" == "2" ]]; then TITLE=${TITLE:11}; fi
+
+if [[ ! -f ${DEFAULTFOLDER}/${PREPEND}${SLUG}.${EXT} ]]; then
+echo -e "---
+Title: \"${TITLE}\"
+Date: \"${DUEDATE}\"
+Due: \"${due}\"
+Publish: \"${publish}\"
+---
+
+" > "${DEFAULTFOLDER}/${PREPEND}${SLUG}.${EXT}"
+fi
+
+${EDITOR} "${DEFAULTFOLDER}/${PREPEND}${SLUG}.${EXT}"
+

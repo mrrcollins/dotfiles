@@ -1,0 +1,7 @@
+[init]
+	defaultBranch = main
+[user]
+	name = MacBook-Pro-2.local
+	email = MacBook-Pro-2.local@collinsoft.com
+[pull]
+	rebase = false

@@ -1,0 +1,13 @@
+[Unit]
+Description=My awesome AutoSSH tunnel to local ssh and friends
+After=network.target
+
+[Service]
+Environment="AUTOSSH_GATETIME=0"
+ExecStart=/usr/bin/autossh -M 0 socks5 -N
+Restart=always
+RestartSec=15s
+
+[Install]
+WantedBy=multi-user.target
+

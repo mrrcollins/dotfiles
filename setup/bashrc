@@ -14,6 +14,11 @@ if [ -d "$HOME/bin" ] ; then
         PATH="$HOME/bin:$PATH"
 fi
 
+# set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/.local/bin" ] ; then
+        PATH="$HOME/.local/bin:$PATH"
+fi
+
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
 HISTCONTROL=ignoreboth
@@ -113,12 +118,12 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
 
 if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
+    source ~/.bash_aliases
 fi
 
 # Import local aliases
 if [ -f ~/.bash_aliases.local ]; then
-    . ~/.bash_aliases.local
+    source ~/.bash_aliases.local
 fi
 
 
@@ -253,12 +258,12 @@ post() {
     wp @r post create --format=status --post_content="${MSG}" --post_title="${MSG}" --post_category=355
 }
 
-je() {
+,je() {
     ENTRY=$1
-    echo -e "\n`date  +\"%Y/%m/%d %R\"` - ${1}" >> ~/notes/Journal/`date +"%Y"`.markdown
+    echo -e "\n`date  +\"%Y/%m/%d %R\"` - ${1}" >> ~/notes/Journal/`date +"%Y"`.md
 }
 
-uz() {
+,uz() {
     file="${1%.zip}"
 
     mkdir ${file}
@@ -266,6 +271,13 @@ uz() {
     unzip ../${1}
     
 }
+
+,findnote() {
+    searchfor=$(echo "${*}" | sed 's/[]\/$*.^|#[]/\\&/g')
+    echo "Searching all notes for ${searchfor}..."
+    grep -riH --include "*.md" "${searchfor}" "${HOME}/notes"
+}
+
 # set PATH so it includes the scripts folder  if it exists
 if [ -d "$HOME/.config/dotfiles/scripts" ] ; then
         PATH="$HOME/.config/dotfiles/scripts:$PATH"
@@ -281,9 +293,39 @@ export QUOTING_STYLE=literal
 # Import local bash settings
 # include `PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"` if on a Mac with coreutils provided by brew
 if [ -f ~/.bashrc.local ]; then
-    . ~/.bashrc.local
+    source ~/.bashrc.local
 fi
 
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
+
+if [ -f ${HOME}/.local/bin/zoxide ]; then
+    eval "$(zoxide init --cmd cd bash)"
+fi
+
+# Launch Yazi
+function y() {
+	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+	yazi "$@" --cwd-file="$tmp"
+	if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+		builtin cd -- "$cwd"
+	fi
+	rm -f -- "$tmp"
+}
+
+function today() {
+	local TODAY=$(date +"%m/%d/%Y")
+	r search -l Daily --due-before ${TODAY} --uncompleted
+}
+
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+#export PATH="$PATH:$HOME/.rvm/bin"
+
+# [[ -n $SSH_TTY ]] && tma main
+
+# Export working directory for terminals [Shell working directory reporting · Eugeny/tabby Wiki](https://github.com/Eugeny/tabby/wiki/Shell-working-directory-reporting)
+export PS1="$PS1\[\e]1337;CurrentDir="'$(pwd)\a\]'
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash

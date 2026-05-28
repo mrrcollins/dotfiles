@@ -1,0 +1,16 @@
+#!/bin/bash
+
+source ~/.raindrop
+
+URL="${1}"
+tags="[\"${2}\"]"
+
+/usr/bin/curl --fail --silent \
+  --data "{ \"link\": \"${URL}\", \ 
+    \"collection\": { \"\$ref\":\"collections\", \"\$id\": 39748777 } \ 
+    \"tags\": ${tags}, \
+    }" \
+  --header "Content-Type: application/json" \
+  --header "Authorization: Bearer ${token}" \
+  https://api.raindrop.io/rest/v1/raindrop 1>/dev/null
+  

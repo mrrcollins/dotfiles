@@ -1,0 +1,54 @@
+#!/bin/bash
+
+#echo "${1}" >> ~/notes/BlogPosts/TGiW.markdown
+
+today=`date +"%Y-%m-%d %H:%M"`
+url=${1}
+dow=$(date +"%u")
+
+#if [ "${dow}" -eq 2 ] || [ "${dow}" -eq 3 ] || [ "${dow}" -eq 4 ];
+
+##if [ "${dow}" -eq 1 ] || [ "${dow}" -eq 2 ];
+##then
+    post="$(date -d "next wednesday + 2 week" +'%Y-%m-%d')-geekphotos.md"
+    wed=$(date -d "next wednesday + 2 week" +'%Y-%m-%d')
+##else
+##    post="$(date -d "next wednesday + 1 week" +'%Y-%m-%d')-geekphotos.md"
+##    wed=$(date -d "next wednesday + 1 week" +'%Y-%m-%d')
+##fi
+
+#url="https://www.imdb.com/title/tt0183790/?ref_=fn_al_tt_1"
+
+title=$(wget -qO- "${url}" | perl -l -0777 -ne 'print $1 if /<title.*?>\s*(.*?)\s*<\/title/si')
+
+[ -z "${title}" ] && title="A new post added `date +'%Y-%m-%d-%H-%M'`"
+
+slug=$(echo -n "${title}" | sed -e 's/[^[:alnum:]]/-/g' | tr -s '-' | tr A-Z a-z)
+echo "Adding ${title}..."
+#echo "${slug}"
+
+cd "${HOME}/notes/BlogPosts/tgir"
+
+if [ ! -f "${post}" ]
+then
+# Put header on top
+cat > "${post}"<< EOF
+---
+Title: "📷 Geek photos of the week for ${wed}"
+Author: goz
+Date: ${wed}T09:45:00-04:00
+Category:
+Slug: geek-photos-${wed}
+Tags:
+- geekphotos
+Summary: "A random assortment of geeky graphics I stumbled across this week."
+featured_image: "https://cdn.collinsoft.com/file/cdn-collinsoft/gozgeek.com/img/2022/polaroidcamera/polaroidcamera-1024x.jpg"
+images: [ "https://cdn.collinsoft.com/file/cdn-collinsoft/gozgeek.com/img/2022/polaroidcamera/polaroidcamera-1024x.jpg" ]
+---
+
+## Geek photos for the week
+
+EOF
+fi
+
+echo -e "### [${title}](${url})\n\n![]()\n\n***\n" >> ${post}
