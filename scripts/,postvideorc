@@ -22,12 +22,13 @@ category="892"
 post_format="400"
 author="1"
 
-while getopts c:v:t: flag
+while getopts c:v:t:d: flag
 do
     case "${flag}" in
         c) caption=${OPTARG};;
         v) video=${OPTARG};;
         t) title=${OPTARG};;
+		d) pdate=${OPTARG};;
     esac
 done
 
@@ -42,6 +43,14 @@ if [ -z "${title}" ] || [ -z "${video}" ]; then
     fi
 fi
 
+# Schedule or post
+if [[ -z "$pdate" ]]; then
+    post_date="$(date '+%Y-%m-%d %H:%M:%S')"
+else
+    post_date="${pdate}"
+	post_status="future"	
+fi
+echo "Post date of ${post_date} ($pdate) and ${post_status}"
 # 1) pull hashtags (WP-ish), strip "#", lowercase, comma-join
 tags=$(
   grep -oE '#[[:alnum:]_][[:alnum:]_-]*' <<<"$caption" \
@@ -94,11 +103,13 @@ post=$(cat <<__POST__
 __POST__
 )
 
+echo "Posting ${title} for ${post_date} and status of ${post_status}"
 postid=$(echo "${post}" | wp @r post create - \
     --porcelain --post_category="${category}" \
     --post_title="${title}" \
     --post_author="${author}" \
     --post_status="${post_status}" \
+	--post_date="${post_date}" \
     --post_excerpt="${caption}" \
     --tags_input="${tags}")
 
