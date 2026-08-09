@@ -39,11 +39,6 @@ fi
 HISTSUFFIX=`tty | sed 's/\///g;s/^dev//g'`
 HISTFILE="$HOME/.bash_history_log/bash_history_$HISTSUFFIX"
 HISTTIMEFORMAT="%y-%m-%d %H:%M:%S "
-HISTCONTROL=ignoredups:ignorespace
-HISTSIZE=1000
-HISTFILESIZE=5000
-shopt -s histappend
-PROMPT_COMMAND='history -a'
 
 PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD/$HOME/~}\007";history -a'
 
