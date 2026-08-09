@@ -47,14 +47,6 @@ PROMPT_COMMAND='history -a'
 
 PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD/$HOME/~}\007";history -a'
 
-# Search history
-function searchhistory() {
-    grep -ri "${1}" ~/.bash_history_log/*
-}
-alias shistory=searchhistory
-
-
-
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
