@@ -86,6 +86,7 @@ winget install python3
 winget install Telegram.TelegramDesktop
 winget install rclone
 winget install Eugeny.Tabby
+winget install JackieLiu.NotepadsApp
 
 ##### Add VIM to the path
 [System.Environment]::SetEnvironmentVariable(
