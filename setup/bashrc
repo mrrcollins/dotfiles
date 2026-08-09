@@ -47,14 +47,6 @@ PROMPT_COMMAND='history -a'
 
 PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD/$HOME/~}\007";history -a'
 
-# Search history
-function searchhistory() {
-    grep -ri "${1}" ~/.bash_history_log/*
-}
-alias shistory=searchhistory
-
-
-
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
@@ -300,7 +292,6 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
 if [ -f ${HOME}/.local/bin/zoxide ]; then
     eval "$(zoxide init --cmd cd bash)"
@@ -386,3 +377,5 @@ complete -F _pyproject_completions pyproject
 
 # Export working directory for terminals [Shell working directory reporting · Eugeny/tabby Wiki](https://github.com/Eugeny/tabby/wiki/Shell-working-directory-reporting)
 export PS1="$PS1\[\e]1337;CurrentDir="'$(pwd)\a\]'
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
