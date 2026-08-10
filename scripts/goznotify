@@ -30,11 +30,23 @@ sendTopic() {
 
 }
 
+sendMsg() {
+# Telegram Zuul
+	#echo "Posting to ${BOTGROUP} - ${TOPIC}"
+	${CURL} -s -X POST \
+    https://api.telegram.org/bot${APIKEY}/sendMessage \
+    --data-urlencode text="${prefix}${MESSAGE}" \
+	-d disable_web_page_preview=true \
+    -d parse_mode="Markdown" \
+    -d chat_id=${TO} > /dev/null
+
+}
+
 level="$1"
 
 # If first arg is a known level, shift it off. Otherwise treat everything as the message.
 case "$level" in
-alert|warn|info)
+alert|warn|info|me)
   shift
   ;;
 *)
@@ -57,9 +69,17 @@ info)
   thread=""
   prefix=""
   ;;
+me)
+	thread="me"
+	prefix=""
+	;;
 esac
 
 # Optional: export TOPIC for other parts of your script to inspect
 TOPIC="$thread"
 
-sendTopic
+if [ $level == "me" ]; then
+	sendMsg
+else
+	sendTopic
+fi

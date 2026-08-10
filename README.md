@@ -2,6 +2,11 @@
 
 As I researched how others handle their dotfiles, I came to the conclusion that there are slightly less then a million different ways to handle it. I'm going to do it my way. A git repo with my dotfiles in it, and a script to set up aliases. 
 
+# Windows
+
+Before cloning on Windows, set git to stop trying to convert line endings: `git config --global core.autocrlf false`. It will save headaches later.
+
+
 # Sources
 
 * [GitHub - vaniacer/sshto: Small bash script to manage your ssh connections. It builds menu (via dialog) from your ~/.ssh/config. It can not only connect but also to run commands, copy files, tunnel ports.](https://github.com/vaniacer/sshto)

@@ -2,6 +2,7 @@
 alias duf='du -sk * | sort -n | perl -ne '\''($s,$f)=split(m{\t});for (qw(K M G)) {if($s<1024) {printf("%.1f",$s);print "$_\t$f"; last};$s=$s/1024}'\'
 alias ls='ls -FX'
 alias less='less -X'
+alias shistory='cat ~/.bash_history_log/* | fzf'
 
 alias .="ls"
 alias ..="cd .. && ls"
@@ -24,7 +25,6 @@ alias t='todo.sh'
 alias nsync="cd ${HOME}/notes;bash notesync.sh;cd -"
 alias tl='cd ~/notes/Lists;vim todo.txt;cd -'
 #alias today='todo.sh ls | grep "(.) "'
-alias today='t lsp'
 alias alltoday="t lsp;grep @today ~/notes/Lists/*.taskpaper |grep -v @done | sed 's/\/home\/goz\/notes\/Lists\///'"
 alias dl='vim ~/notes/Lists/gozdaily.taskpaper'
 alias dtl='vim -O ~/notes/Lists/gozdaily.taskpaper ~/notes/Lists/goztoday.taskpaper'

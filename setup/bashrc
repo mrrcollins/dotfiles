@@ -39,21 +39,8 @@ fi
 HISTSUFFIX=`tty | sed 's/\///g;s/^dev//g'`
 HISTFILE="$HOME/.bash_history_log/bash_history_$HISTSUFFIX"
 HISTTIMEFORMAT="%y-%m-%d %H:%M:%S "
-HISTCONTROL=ignoredups:ignorespace
-HISTSIZE=1000
-HISTFILESIZE=5000
-shopt -s histappend
-PROMPT_COMMAND='history -a'
 
 PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD/$HOME/~}\007";history -a'
-
-# Search history
-function searchhistory() {
-    grep -ri "${1}" ~/.bash_history_log/*
-}
-alias shistory=searchhistory
-
-
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
@@ -300,7 +287,6 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
 if [ -f ${HOME}/.local/bin/zoxide ]; then
     eval "$(zoxide init --cmd cd bash)"
@@ -316,7 +302,75 @@ function y() {
 	rm -f -- "$tmp"
 }
 
+function today() {
+	local TODAY=$(date +"%m/%d/%Y")
+	r search -l Daily --due-before ${TODAY} --uncompleted
+}
+
+pyproject() {
+    local base_dir="$HOME/Development"
+    local project_name="$1"
+    local project_dir
+    local venv_path
+    local selection
+
+    mkdir -p "$base_dir" || return 1
+
+    if [[ -z "$project_name" ]]; then
+        selection=$(
+            {
+                find "$base_dir" -mindepth 1 -maxdepth 1 -type d -exec basename {} \;
+                echo "[Create new project]"
+            } | sort | fzf --prompt="Project> " --height=40% --reverse
+        ) || return 1
+
+        if [[ "$selection" == "[Create new project]" ]]; then
+            read -r -p "New project name: " project_name
+            [[ -n "$project_name" ]] || return 1
+        else
+            project_name="$selection"
+        fi
+    fi
+
+    project_dir="$base_dir/$project_name"
+
+    mkdir -p "$project_dir" || return 1
+    cd "$project_dir" || return 1
+
+    if command -v git >/dev/null 2>&1 && [[ ! -d .git ]]; then
+        git init || return 1
+    fi
+
+    if [[ -d .git ]]; then
+        [[ -f .gitignore ]] || touch .gitignore
+        grep -qxF '.venv' .gitignore || echo '.venv' >> .gitignore
+    fi
+
+    [[ -d .venv ]] || python3 -m venv .venv || return 1
+
+    venv_path="$PWD/.venv"
+    [[ "$VIRTUAL_ENV" == "$venv_path" ]] || source .venv/bin/activate || return 1
+}
+
+_pyproject_completions() {
+    local cur base_dir
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    base_dir="$HOME/Development"
+
+    COMPREPLY=()
+    [[ -d "$base_dir" ]] || return 0
+
+    COMPREPLY=( $(compgen -W "$(find "$base_dir" -mindepth 1 -maxdepth 1 -type d -printf '%f\n')" -- "$cur") )
+}
+
+complete -F _pyproject_completions pyproject
+
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 #export PATH="$PATH:$HOME/.rvm/bin"
 
 # [[ -n $SSH_TTY ]] && tma main
+
+# Export working directory for terminals [Shell working directory reporting · Eugeny/tabby Wiki](https://github.com/Eugeny/tabby/wiki/Shell-working-directory-reporting)
+export PS1="$PS1\[\e]1337;CurrentDir="'$(pwd)\a\]'
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
