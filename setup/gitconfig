@@ -1,7 +1,7 @@
 [init]
 	defaultBranch = main
 [user]
-	name = MacBook-Pro-2.local
-	email = MacBook-Pro-2.local@collinsoft.com
+	name = Ryan Collins
+	email = <github@rc.ryancollins.org>
 [pull]
 	rebase = false
