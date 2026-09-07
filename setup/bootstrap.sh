@@ -14,6 +14,7 @@ if [[ "$ostype" =~ "Alpine" ]]; then
     sudo apk update
     sudo apk upgrade
 	sudo apk add $apps
+	sudo apk add gcompat
 elif [[ "$ostype" =~ "Android" ]]; then
     apt update
     apt upgrade

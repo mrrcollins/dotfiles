@@ -21,4 +21,4 @@ yt-dlp -x -o "%(title)s.%(ext)s" --audio-format mp3 "${yturl}"
 
 /usr/local/bin/telegram-send --caption "${songname%.*}" --audio "${songname%.*}.mp3"
 
-[ $HOSTNAME == "dev" ] && rsync --progress "${songname%.*}.mp3" icloud:/Users/goz/icloud/Music/
+[ $HOSTNAME == "dev" ] && rsync --progress "${songname%.*}.mp3" copyparty:/home/copyparty/cp/icloud/Music/
