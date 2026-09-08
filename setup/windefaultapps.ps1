@@ -68,7 +68,6 @@ function Update-PathSafe {
 
 
 #### Install apps ####
-<#
 winget install OneCommander --source winget
 winget install Obsidian.Obsidian 
 winget install winfsp
@@ -84,7 +83,6 @@ winget install zen-browser
 winget install gsudo
 winget install vim.vim
 winget install python3
-#>
 
 ##### Add VIM to the path
 [System.Environment]::SetEnvironmentVariable(
