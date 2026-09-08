@@ -39,21 +39,8 @@ fi
 HISTSUFFIX=`tty | sed 's/\///g;s/^dev//g'`
 HISTFILE="$HOME/.bash_history_log/bash_history_$HISTSUFFIX"
 HISTTIMEFORMAT="%y-%m-%d %H:%M:%S "
-HISTCONTROL=ignoredups:ignorespace
-HISTSIZE=1000
-HISTFILESIZE=5000
-shopt -s histappend
-PROMPT_COMMAND='history -a'
 
 PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD/$HOME/~}\007";history -a'
-
-# Search history
-function searchhistory() {
-    grep -ri "${1}" ~/.bash_history_log/*
-}
-alias shistory=searchhistory
-
-
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
@@ -290,17 +277,10 @@ source bashmarks.sh
 # Fix ls
 export QUOTING_STYLE=literal
 
-# Import local bash settings
-# include `PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"` if on a Mac with coreutils provided by brew
-if [ -f ~/.bashrc.local ]; then
-    source ~/.bashrc.local
-fi
-
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
 if [ -f ${HOME}/.local/bin/zoxide ]; then
     eval "$(zoxide init --cmd cd bash)"
@@ -316,7 +296,310 @@ function y() {
 	rm -f -- "$tmp"
 }
 
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-export PATH="$PATH:$HOME/.rvm/bin"
+function today() {
+	local TODAY=$(date +"%m/%d/%Y")
+	r search -l Daily --due-before ${TODAY} --uncompleted
+}
 
-[[ -n $SSH_TTY ]] && tma main
+pyproject() {
+    local base_dir="$HOME/Development"
+    local project_name="$1"
+    local project_dir
+    local venv_path
+    local selection
+
+    mkdir -p "$base_dir" || return 1
+
+    if [[ -z "$project_name" ]]; then
+        selection=$(
+            {
+                find "$base_dir" -mindepth 1 -maxdepth 1 -type d -exec basename {} \;
+                echo "[Create new project]"
+            } | sort | fzf --prompt="Project> " --height=40% --reverse
+        ) || return 1
+
+        if [[ "$selection" == "[Create new project]" ]]; then
+            read -r -p "New project name: " project_name
+            [[ -n "$project_name" ]] || return 1
+        else
+            project_name="$selection"
+        fi
+    fi
+
+    project_dir="$base_dir/$project_name"
+
+    mkdir -p "$project_dir" || return 1
+    cd "$project_dir" || return 1
+
+    if command -v git >/dev/null 2>&1 && [[ ! -d .git ]]; then
+        git init || return 1
+    fi
+
+    if [[ -d .git ]]; then
+        [[ -f .gitignore ]] || touch .gitignore
+        grep -qxF '.venv' .gitignore || echo '.venv' >> .gitignore
+    fi
+
+    [[ -d .venv ]] || python3 -m venv .venv || return 1
+
+    venv_path="$PWD/.venv"
+    [[ "$VIRTUAL_ENV" == "$venv_path" ]] || source .venv/bin/activate || return 1
+}
+
+_pyproject_completions() {
+    local cur base_dir
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    base_dir="$HOME/Development"
+
+    COMPREPLY=()
+    [[ -d "$base_dir" ]] || return 0
+
+    COMPREPLY=( $(compgen -W "$(find "$base_dir" -mindepth 1 -maxdepth 1 -type d -printf '%f\n')" -- "$cur") )
+}
+
+complete -F _pyproject_completions pyproject
+
+# -----------------------------------------------------------------------------
+# SSH / Mosh fuzzy host selector
+#
+# Usage:
+#   sshs                         Open fzf host picker
+#   sshs host                    SSH directly if host is an exact configured Host
+#   sshs partial                 Open fzf with "partial" as the search
+#   sshs user@host               SSH directly as user
+#   sshs user@partial            Fuzzy-search hosts, preserving user@
+#   sshs user@host<Tab>          Tab-complete hosts, preserving user@
+#
+# In fzf:
+#   Enter                        Connect with SSH
+#   Alt-M                        Connect with Mosh
+#   Esc                          Cancel
+#
+# Hosts are collected recursively from:
+#   ~/.ssh/config
+#   /etc/ssh/ssh_config
+#   Any files referenced by Include directives
+#
+# Duplicate hosts and wildcard Host patterns are ignored.
+# -----------------------------------------------------------------------------
+
+
+_sshs_hosts() {
+    declare -A seen_files=()
+    declare -A seen_hosts=()
+
+    _sshs_parse_config() {
+        local file="$1"
+        local config_type="$2"
+        local line keyword rest pattern included host
+        local -a parts
+
+        [[ -f "$file" && -r "$file" ]] || return
+
+        # Avoid recursive Include loops
+        [[ ${seen_files["$file"]+yes} ]] && return
+        seen_files["$file"]=1
+
+        while IFS= read -r line || [[ -n "$line" ]]; do
+
+            # Strip comments
+            line="${line%%#*}"
+
+            # Trim leading whitespace
+            line="${line#"${line%%[![:space:]]*}"}"
+
+            # Trim trailing whitespace
+            line="${line%"${line##*[![:space:]]}"}"
+
+            [[ -z "$line" ]] && continue
+
+            keyword="${line%%[[:space:]]*}"
+            rest="${line#"$keyword"}"
+
+            # Trim whitespace before arguments
+            rest="${rest#"${rest%%[![:space:]]*}"}"
+
+            case "${keyword,,}" in
+
+                host)
+                    read -ra parts <<< "$rest"
+
+                    for host in "${parts[@]}"; do
+
+                        # Ignore patterns such as:
+                        #   Host *
+                        #   Host *.example.com
+                        #   Host !foo
+                        [[ "$host" == *[\*\?\!]* ]] && continue
+
+                        # Remove duplicates while preserving discovery order
+                        if [[ ! ${seen_hosts["$host"]+yes} ]]; then
+                            seen_hosts["$host"]=1
+                            printf '%s\n' "$host"
+                        fi
+                    done
+                    ;;
+
+                include)
+                    read -ra parts <<< "$rest"
+
+                    for pattern in "${parts[@]}"; do
+
+                        # Expand ~/...
+                        if [[ "$pattern" == "~/"* ]]; then
+                            pattern="$HOME/${pattern#~/}"
+
+                        # Relative paths in the user's config are relative
+                        # to ~/.ssh
+                        elif [[ "$pattern" != /* &&
+                                "$config_type" == "user" ]]; then
+                            pattern="$HOME/.ssh/$pattern"
+
+                        # Relative paths in the system config are relative
+                        # to /etc/ssh
+                        elif [[ "$pattern" != /* ]]; then
+                            pattern="/etc/ssh/$pattern"
+                        fi
+
+                        # Expand Include globs in lexical order
+                        while IFS= read -r included; do
+                            [[ -n "$included" ]] || continue
+
+                            _sshs_parse_config \
+                                "$included" \
+                                "$config_type"
+
+                        done < <(
+                            compgen -G "$pattern" | sort
+                        )
+                    done
+                    ;;
+            esac
+
+        done < "$file"
+    }
+
+    # User SSH configuration
+    _sshs_parse_config "$HOME/.ssh/config" "user"
+
+    # System-wide SSH configuration
+    _sshs_parse_config "/etc/ssh/ssh_config" "system"
+
+    unset -f _sshs_parse_config
+}
+
+
+sshs() {
+    local argument="${1:-}"
+    local query="$argument"
+    local username=""
+    local destination
+    local host key
+    local -a result
+    local hosts
+
+    hosts="$(_sshs_hosts)"
+
+    # Split user@host if a username was supplied.
+    if [[ "$argument" == *@* ]]; then
+        username="${argument%@*}"
+        query="${argument##*@}"
+    fi
+
+    # If the host portion is an exact configured Host,
+    # skip fzf and SSH directly.
+    if [[ -n "$query" ]] &&
+       grep -Fxq -- "$query" <<< "$hosts"; then
+
+        if [[ -n "$username" ]]; then
+            ssh "${username}@${query}"
+        else
+            ssh "$query"
+        fi
+
+        return
+    fi
+
+    # Otherwise launch fzf using only the hostname portion
+    # as the search query.
+    mapfile -t result < <(
+        printf '%s\n' "$hosts" |
+            fzf \
+                --query="$query" \
+                --prompt="Host> " \
+                --header="Enter: SSH   Alt-M: Mosh   Esc: Cancel" \
+                --expect=enter,alt-m
+    )
+
+    key="${result[0]:-}"
+    host="${result[1]:-}"
+
+    # Esc or otherwise cancelled
+    [[ -n "$host" ]] || return
+
+    # Reattach username, if supplied
+    if [[ -n "$username" ]]; then
+        destination="${username}@${host}"
+    else
+        destination="$host"
+    fi
+
+    case "$key" in
+        alt-m)
+            mosh "$destination"
+            ;;
+
+        enter|"")
+            ssh "$destination"
+            ;;
+    esac
+}
+
+
+_sshs_completion() {
+    local cur
+    local username=""
+    local hostpart
+    local host
+    local -a matches
+
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    hostpart="$cur"
+
+    # Preserve user@ while completing only the hostname.
+    if [[ "$cur" == *@* ]]; then
+        username="${cur%@*}@"
+        hostpart="${cur##*@}"
+    fi
+
+    mapfile -t matches < <(
+        compgen -W "$(_sshs_hosts)" -- "$hostpart"
+    )
+
+    COMPREPLY=()
+
+    for host in "${matches[@]}"; do
+        COMPREPLY+=("${username}${host}")
+    done
+}
+
+
+# Enable tab completion for sshs
+complete -F _sshs_completion sshs
+
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+#export PATH="$PATH:$HOME/.rvm/bin"
+
+# [[ -n $SSH_TTY ]] && tma main
+
+# Export working directory for terminals [Shell working directory reporting · Eugeny/tabby Wiki](https://github.com/Eugeny/tabby/wiki/Shell-working-directory-reporting)
+export PS1="$PS1\[\e]1337;CurrentDir="'$(pwd)\a\]'
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+# Import local bash settings
+# include `PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"` if on a Mac with coreutils provided by brew
+if [ -f ~/.bashrc.local ]; then
+    source ~/.bashrc.local
+fi
+

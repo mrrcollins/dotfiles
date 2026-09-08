@@ -14,7 +14,8 @@ echo "${ytdlp}"
 #${ytdlp} --update-to nightly
 #pip install yt-dlp -U
 #filename=$(${ytdlp} --cookies ${HOME}/cookies.SocialMedia.txt --user-agent facebookexternalhit/1.1 --windows-filenames --get-filename "${1}")
-${ytdlp} -U
+#${ytdlp} -U
+python3 -m pip install -U --pre "yt-dlp[default]"
 
 if [[ "${1}" =~ "tiktok.com" ]]; then
     filename=$(${ytdlp} --extractor-args "tiktok:api_hostname=api22-normal-c-useast2a.tiktokv.com" --windows-filenames --get-filename "${1}")
@@ -63,7 +64,8 @@ videoupload -t "${filename:0:50}" -c "${caption}" "${file}"
 
 if [ $HOSTNAME == "dev" ]; then
     ffmpeg -i "${file}" -vcodec libx264 -acodec aac "${recompress}"
-    rsync --progress "${recompress}" icloud:/Users/goz/icloud/Movies/iPhoneRecord/
+    #rsync --progress "${recompress}" icloud:/Users/goz/icloud/Movies/iPhoneRecord/
+    rsync --progress "${recompress}" copyparty:/home/copyparty/cp/icloud-full/Movies/iPhoneRecord/
 fi
 
 

@@ -77,17 +77,21 @@ winget install Git.Git
 winget install Greenshot.Greenshot
 winget install Google.Chrome
 winget install Google.GoogleDrive
-winget install powertoys
+winget install Microsoft.PowerToys
 winget install espanso
 winget install zen-browser
 winget install gsudo
 winget install vim.vim
 winget install python3
+winget install Telegram.TelegramDesktop
+winget install rclone
+winget install Eugeny.Tabby
+winget install JackieLiu.NotepadsApp
 
 ##### Add VIM to the path
 [System.Environment]::SetEnvironmentVariable(
     "Path",
-    [System.Environment]::GetEnvironmentVariable("Path", "User") + ";C:\Program Files\Vim\vim91",
+    [System.Environment]::GetEnvironmentVariable("Path", "User") + ";C:\Program Files\Vim\vim92",
     "User"
 )
 
