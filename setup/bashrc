@@ -512,8 +512,10 @@ sshs() {
        grep -Fxq -- "$query" <<< "$hosts"; then
 
         if [[ -n "$username" ]]; then
+			#printf '\033]0;%s\007' "${username}@${query}"
             ssh "${username}@${query}"
         else
+			#printf '\033]0;%s\007' "$query"
             ssh "$query"
         fi
 
@@ -544,6 +546,7 @@ sshs() {
         destination="$host"
     fi
 
+	printf '\033]0;%s\007' "$destination"
     case "$key" in
         alt-m)
             mosh "$destination"
