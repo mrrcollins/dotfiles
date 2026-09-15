@@ -64,7 +64,8 @@ videoupload -t "${filename:0:50}" -c "${caption}" "${file}"
 
 if [ $HOSTNAME == "dev" ]; then
     ffmpeg -i "${file}" -vcodec libx264 -acodec aac "${recompress}"
-    rsync --progress "${recompress}" icloud:/Users/goz/icloud/Movies/iPhoneRecord/
+    #rsync --progress "${recompress}" icloud:/Users/goz/icloud/Movies/iPhoneRecord/
+    rsync --progress "${recompress}" copyparty:/home/copyparty/cp/icloud-full/Movies/iPhoneRecord/
 fi
 
 
