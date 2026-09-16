@@ -1,0 +1,10 @@
+# Put this at ~/.bashrc.local if you want to use mosh to connect to 
+# OpenBSD and jump off from there
+
+if [[ $- == *i* && -t 0 && -t 1 ]]; then
+	echo "Control-c to cancel..."
+	sleep 2
+	mosh bsd
+	read -n 1 -s -r -p "Press any key to close..."
+	exit
+fi
