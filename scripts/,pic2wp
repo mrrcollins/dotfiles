@@ -34,7 +34,7 @@ comment() {
 
 
 # Picture category for site
-category["r"]="355"
+category["r"]="361" # 355 is Asides
 category["e"]="2074"
 
 # Post_format for picture
@@ -275,9 +275,9 @@ else
     fi
     comment "Turn off sharing to FB and Threads because Instagram will do that..."
     #FB
-    wp @${site} post meta set ${postid} _wpas_skip_publicize_21764758 1
+    #wp @${site} post meta set ${postid} _wpas_skip_publicize_21764758 1
     #Threads
-    wp @${site} post meta set ${postid} _wpas_skip_publicize_25478617 1
+    #wp @${site} post meta set ${postid} _wpas_skip_publicize_25478617 1
 fi
 
 comment "Set featured image"

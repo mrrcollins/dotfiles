@@ -25,12 +25,26 @@ author="1"
 while getopts c:v:t:d: flag
 do
     case "${flag}" in
-        c) caption=${OPTARG};;
+        c) encodedCaption=${OPTARG};;
         v) video=${OPTARG};;
-        t) title=${OPTARG};;
+        t) encodedTitle=${OPTARG};;
 		d) pdate=${OPTARG};;
     esac
 done
+
+echo "Title - $encodedTitle"
+echo "Caption - $encodedCaption"
+
+title=$(printf '%s' "$encodedTitle" | base64 -d)
+caption=$(printf '%s' "$encodedCaption" | base64 -d)
+
+printf 'Title is:\n%s\n\nCaption is:\n%s\n' "$title" "$caption"
+echo "Title is:
+${title}
+
+Caption is:
+${caption}"
+exit
 
 if [ -z "${title}" ] || [ -z "${video}" ]; then
     if [ ${debug} ]; then
